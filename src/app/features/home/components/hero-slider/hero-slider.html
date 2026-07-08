@@ -1,0 +1,45 @@
+<div class="hero-slider" id="hero">
+    @for (slide of slides; track slide.id; let i = $index) {
+    <div class="slide" [class.active]="currentSlide() === i" [style.backgroundImage]="'url(' + slide.image + ')'">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="slide-content">
+                <div class="slide-badge">{{ 'home.about.subtitle' | translate }}</div>
+                <h1>{{ slide.title | translate }}</h1>
+                <p>{{ slide.description | translate }}</p>
+                <div class="cta-group">
+                    <button class="cta-button primary">
+                        {{ 'home.slider.cta' | translate }}
+                    </button>
+                    <button class="cta-button secondary" (click)="scrollToAbout()">
+                        {{ 'navbar.about' | translate }}
+                        <i class="pi pi-arrow-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <div class="slider-controls">
+        <button class="prev" (click)="prevSlide()" aria-label="Previous slide">
+            <i class="pi pi-chevron-right"></i>
+        </button>
+        <button class="next" (click)="nextSlide()" aria-label="Next slide">
+            <i class="pi pi-chevron-left"></i>
+        </button>
+    </div>
+
+    <div class="slider-dots">
+        @for (slide of slides; track slide.id; let i = $index) {
+        <button class="dot" [class.active]="currentSlide() === i" (click)="goToSlide(i)"
+            [attr.aria-label]="'Go to slide ' + (i + 1)">
+        </button>
+        }
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator">
+        <span></span>
+    </div>
+</div>

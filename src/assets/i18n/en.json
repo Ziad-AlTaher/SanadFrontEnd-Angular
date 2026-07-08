@@ -1,0 +1,132 @@
+{
+    "navbar": {
+        "home": "Home",
+        "services": "Services",
+        "service1": "Web Development",
+        "service2": "Mobile Apps",
+        "contact": "Contact Us"
+    },
+    "footer": {
+        "about": "We build amazing digital experiences that help your business grow.",
+        "links": "Quick Links",
+        "contact": "Contact info",
+        "rights": "All rights reserved."
+    },
+    "home": {
+        "slider": {
+            "cta": "Get Started",
+            "slide1": {
+                "title": "Welcome to BaseProject",
+                "desc": "Building future-proof applications with modern technologies."
+            },
+            "slide2": {
+                "title": "Professional Services",
+                "desc": "Expert solutions tailored to your business needs."
+            },
+            "slide3": {
+                "title": "Global Reach",
+                "desc": "Connecting you with customers around the world."
+            }
+        }
+    },
+    "contact": {
+        "title": "Get In Touch",
+        "subtitle": "Have a project in mind? We'd love to hear from you.",
+        "address": {
+            "title": "Our Location",
+            "value": "123 Innovation Street, Tech City"
+        },
+        "email": {
+            "title": "Email Us"
+        },
+        "form": {
+            "name": "Your Name",
+            "email": "Your Email",
+            "message": "Your Message",
+            "submit": "Send Message"
+        }
+    },
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "add": "Add",
+        "loading": "Loading...",
+        "error": "Error",
+        "confirm": "Confirm",
+        "yes": "Yes",
+        "no": "No"
+    },
+    "theme": {
+        "toggle": "Toggle Theme"
+    },
+    "showingData": {
+        "title": "Data Explorer",
+        "subtitle": "Browse, filter, and manage library books using client-side and server-side data tables.",
+        "clientTableTitle": "Client-Side Table",
+        "clientTableDesc": "All data loaded at once — sorting and filtering happen entirely in the browser.",
+        "serverTableTitle": "Server-Side Table",
+        "serverTableDesc": "Each page/sort/filter triggers a fresh API call — ideal for large data sets.",
+        "chartTitle": "Views vs Downloads",
+        "chartDesc": "A bar chart showing the top 10 books by view and download count.",
+        "searchPlaceholder": "Search books...",
+        "colTitle": "Title",
+        "colAuthor": "Author",
+        "colPublisher": "Publisher",
+        "colCategory": "Category",
+        "colViews": "Views",
+        "colDownloads": "Downloads",
+        "colActions": "Actions",
+        "noData": "No books found.",
+        "views": "Views",
+        "downloads": "Downloads",
+        "chartYAxis": "Count",
+        "actions": {
+            "add": "Add Book",
+            "edit": "Edit",
+            "delete": "Delete",
+            "deleteConfirmHeader": "Delete Book",
+            "deleteConfirmMessage": "Are you sure you want to delete this book?",
+            "deleteSuccess": "Book deleted successfully.",
+            "deleteError": "Failed to delete book."
+        }
+    },
+    "bookForm": {
+        "addTitle": "Add New Book",
+        "editTitle": "Edit Book",
+        "subtitle": "Fill in the details below to save the book.",
+        "sectionBasic": "Book Information",
+        "sectionLanguages": "Languages",
+        "sectionLinks": "Links & Assets",
+        "sectionDescription": "Description",
+        "title": "Title",
+        "titlePlaceholder": "Enter book title",
+        "author": "Author",
+        "authorPlaceholder": "Enter author name",
+        "translator": "Translator",
+        "translatorPlaceholder": "Enter translator name (optional)",
+        "publisher": "Publisher",
+        "publisherPlaceholder": "Enter publisher name",
+        "category": "Category",
+        "categoryPlaceholder": "Select a category",
+        "sourceLang": "Source Language",
+        "sourceLangPlaceholder": "e.g. Arabic",
+        "targetLang": "Target Language",
+        "targetLangPlaceholder": "e.g. English",
+        "imageUrl": "Cover Image URL",
+        "imageUrlPlaceholder": "https://...",
+        "downloadLink": "Download Link",
+        "downloadLinkPlaceholder": "https://...",
+        "outSource": "External Source",
+        "descriptionPlaceholder": "Write the book description here...",
+        "descriptionHint": "You can use the toolbar to format your text. The content will be saved as HTML.",
+        "required": "This field is required.",
+        "create": "Add Book",
+        "update": "Save Changes",
+        "createSuccess": "Book created successfully!",
+        "createError": "Failed to create book.",
+        "updateSuccess": "Book updated successfully!",
+        "updateError": "Failed to update book."
+    }
+}

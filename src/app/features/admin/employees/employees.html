@@ -1,0 +1,144 @@
+<p-toast position="top-center" />
+<p-confirmDialog />
+
+<div class="crud-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'admin.nav.employees' | translate }}</h1>
+      <p class="page-subtitle">{{ 'admin.employees.subtitle' | translate }}</p>
+    </div>
+    <p-button
+      [label]="'common.add' | translate"
+      icon="pi pi-plus"
+      (onClick)="openAddDialog()"
+    />
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <p-table
+      [value]="employees()"
+      [loading]="isLoading()"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 25]"
+      [globalFilterFields]="['name', 'nationalId', 'phone', 'email', 'department']"
+      dataKey="id"
+      styleClass="p-datatable-striped p-datatable-sm"
+      #dt
+    >
+      <ng-template #caption>
+        <div class="table-caption">
+          <span class="p-input-icon-start">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'admin.search' | translate" />
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="name">{{ 'admin.cols.name' | translate }} <p-sortIcon field="name" /></th>
+          <th>{{ 'admin.cols.phone' | translate }}</th>
+          <th pSortableColumn="role">{{ 'admin.cols.role' | translate }}</th>
+          <th pSortableColumn="department">{{ 'admin.cols.department' | translate }} <p-sortIcon field="department" /></th>
+          <th pSortableColumn="salary">{{ 'admin.cols.salary' | translate }} <p-sortIcon field="salary" /></th>
+          <th pSortableColumn="status">{{ 'admin.cols.status' | translate }}</th>
+          <th>{{ 'admin.cols.actions' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-item>
+        <tr>
+          <td class="font-semibold">
+            {{ item.name }}
+            <div class="text-muted text-xs">{{ item.email }}</div>
+          </td>
+          <td>{{ item.phone }}</td>
+          <td>{{ getRoleLabel(item.role) }}</td>
+          <td>{{ item.department }}</td>
+          <td class="text-center">{{ item.salary | number }}</td>
+          <td>
+            <p-tag [value]="item.status === 'active' ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
+                   [severity]="getStatusSeverity(item.status)" />
+          </td>
+          <td>
+            <div class="action-btns">
+              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info" (onClick)="openEditDialog(item)" [pTooltip]="'common.edit' | translate" />
+              <p-button
+                [icon]="item.status === 'active' ? 'pi pi-ban' : 'pi pi-check-circle'"
+                [rounded]="true" [text]="true"
+                [severity]="item.status === 'active' ? 'warn' : 'success'"
+                (onClick)="toggleStatus(item)"
+                [pTooltip]="item.status === 'active' ? ('admin.deactivate' | translate) : ('admin.activate' | translate)"
+              />
+              <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(item)" [pTooltip]="'common.delete' | translate" />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr><td colspan="7" class="text-center p-4">{{ 'admin.noData' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Add / Edit Dialog -->
+<p-dialog
+  [(visible)]="showDialog"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [style]="{ width: '42rem' }"
+  [header]="(isEditMode() ? 'admin.employees.editTitle' : 'admin.employees.addTitle') | translate"
+>
+  <form [formGroup]="form" class="dialog-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'admin.cols.name' | translate }}</label>
+        <input pInputText formControlName="name" />
+      </div>
+      <div class="form-group">
+        <label>{{ 'admin.cols.nationalId' | translate }}</label>
+        <input pInputText formControlName="nationalId" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'admin.cols.phone' | translate }}</label>
+        <input pInputText formControlName="phone" />
+      </div>
+      <div class="form-group">
+        <label>{{ 'admin.cols.email' | translate }}</label>
+        <input pInputText formControlName="email" type="email" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'admin.cols.role' | translate }}</label>
+        <p-select formControlName="role" [options]="roles" optionLabel="label" optionValue="value" appendTo="body" />
+      </div>
+      <div class="form-group">
+        <label>{{ 'admin.cols.department' | translate }}</label>
+        <input pInputText formControlName="department" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'admin.cols.salary' | translate }}</label>
+        <p-inputnumber formControlName="salary" [min]="0" prefix="ج.م " />
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button [label]="'common.cancel' | translate" icon="pi pi-times" [text]="true" (onClick)="showDialog.set(false)" />
+    <p-button [label]="'common.save' | translate" icon="pi pi-check" (onClick)="save()" />
+  </ng-template>
+</p-dialog>

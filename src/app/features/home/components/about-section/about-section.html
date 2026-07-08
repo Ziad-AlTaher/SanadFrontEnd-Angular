@@ -1,0 +1,49 @@
+<section class="about-section" id="about">
+    <!-- Section header -->
+    <div class="section-header">
+        <span class="section-label">{{ 'home.about.subtitle' | translate }}</span>
+        <h2 class="section-title">{{ 'home.about.title' | translate }}</h2>
+        <div class="title-underline"></div>
+    </div>
+
+    <!-- Main content: description + values grid -->
+    <div class="about-body container">
+        <!-- Text column -->
+        <div class="about-text">
+            <p class="about-description">{{ 'home.about.description' | translate }}</p>
+
+            <!-- Decorative calligraphy-style quote -->
+            <blockquote class="arabic-quote">
+                <i class="pi pi-comment quote-icon"></i>
+                <span>لِّلَّذِينَ أَحۡسَنُواْ ٱلۡحُسۡنَىٰ وَزِيَادَةٞۖ وَلَا يَرۡهَقُ وُجُوهَهُمۡ قَتَرٞ وَلَا ذِلَّةٌۚ
+                    أُوْلَٰٓئِكَ أَصۡحَٰبُ ٱلۡجَنَّةِۖ هُمۡ فِيهَا خَٰلِدُونَ ﴿٢٦﴾</span>
+            </blockquote>
+        </div>
+
+        <!-- Values cards column -->
+        <div class="values-grid">
+            @for (value of values; track value.titleKey) {
+            <div class="value-card">
+                <div class="value-icon-wrap">
+                    <i class="pi {{ value.icon }}"></i>
+                </div>
+                <h3>{{ value.titleKey | translate }}</h3>
+                <p>{{ value.descKey | translate }}</p>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+        <div class="container stats-container">
+            @for (stat of stats; track stat.labelKey) {
+            <div class="stat-item">
+                <i class="pi {{ stat.icon }} stat-icon"></i>
+                <span class="stat-value">{{ formatNumber(stat.displayValue()) }}{{ stat.suffix }}</span>
+                <span class="stat-label">{{ stat.labelKey | translate }}</span>
+            </div>
+            }
+        </div>
+    </div>
+</section>

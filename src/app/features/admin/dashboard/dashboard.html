@@ -1,0 +1,76 @@
+<div class="dashboard-page">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">{{ 'admin.nav.dashboard' | translate }}</h1>
+    <p class="page-subtitle">{{ 'admin.dashboard.subtitle' | translate }}</p>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card--green">
+      <div class="stat-icon"><i class="pi pi-users"></i></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.totalBeneficiaries }}</div>
+        <div class="stat-label">{{ 'admin.stats.beneficiaries' | translate }}</div>
+        <div class="stat-sub">{{ stats.activeBeneficiaries }} {{ 'admin.stats.active' | translate }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card--blue">
+      <div class="stat-icon"><i class="pi pi-id-card"></i></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.totalEmployees }}</div>
+        <div class="stat-label">{{ 'admin.stats.employees' | translate }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card--amber">
+      <div class="stat-icon"><i class="pi pi-dollar"></i></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.totalDonationsAmount | number }}</div>
+        <div class="stat-label">{{ 'admin.stats.donationsAmount' | translate }}</div>
+        <div class="stat-sub">{{ stats.totalDonations }} {{ 'admin.stats.donationsCount' | translate }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card--rose">
+      <div class="stat-icon"><i class="pi pi-heart"></i></div>
+      <div class="stat-info">
+        <div class="stat-value">{{ stats.totalAssistance }}</div>
+        <div class="stat-label">{{ 'admin.stats.assistance' | translate }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3 class="chart-title">{{ 'admin.dashboard.donationsByStatus' | translate }}</h3>
+      @if (donutSeries.length > 0) {
+        <apx-chart
+          [series]="donutSeries"
+          [chart]="donutChart"
+          [labels]="donutLabels"
+          [colors]="['#027373', '#038C7F', '#A9D9D0']"
+          [legend]="{ position: 'bottom' }"
+          [dataLabels]="{ enabled: true }"
+        />
+      }
+    </div>
+
+    <div class="chart-card">
+      <h3 class="chart-title">{{ 'admin.dashboard.assistanceByType' | translate }}</h3>
+      @if (barSeries.length > 0) {
+        <apx-chart
+          [series]="barSeries"
+          [chart]="barChart"
+          [xaxis]="barXAxis"
+          [plotOptions]="barPlotOptions"
+          [dataLabels]="barDataLabels"
+          [fill]="barFill"
+          [colors]="barColors"
+        />
+      }
+    </div>
+  </div>
+</div>

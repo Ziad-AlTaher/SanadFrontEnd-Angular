@@ -1,0 +1,23 @@
+<section class="services-section" id="services">
+    <!-- Section header -->
+    <div class="section-header">
+        <span class="section-label">{{ 'services.subtitle' | translate }}</span>
+        <h2 class="section-title">{{ 'services.title' | translate }}</h2>
+        <div class="title-underline"></div>
+    </div>
+
+    <!-- Services Grid -->
+    <div class="services-body container">
+        <div class="services-grid">
+            @for (service of services; track service.titleKey) {
+            <div class="service-card">
+                <div class="service-icon-wrap">
+                    <i class="pi {{ service.icon }}"></i>
+                </div>
+                <h3>{{ service.titleKey | translate }}</h3>
+                <p>{{ service.descKey | translate }}</p>
+            </div>
+            }
+        </div>
+    </div>
+</section>

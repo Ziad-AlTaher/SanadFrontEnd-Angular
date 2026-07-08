@@ -1,0 +1,151 @@
+<p-toast position="top-center" />
+<p-confirmDialog />
+
+<div class="crud-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ 'admin.nav.beneficiaries' | translate }}</h1>
+      <p class="page-subtitle">{{ 'admin.beneficiaries.subtitle' | translate }}</p>
+    </div>
+    <p-button
+      [label]="'common.add' | translate"
+      icon="pi pi-plus"
+      (onClick)="openAddDialog()"
+    />
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <p-table
+      [value]="beneficiaries()"
+      [loading]="isLoading()"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 25]"
+      [globalFilterFields]="['fullName', 'nationalId', 'phoneNumber', 'address', 'notes']"
+      dataKey="id"
+      styleClass="p-datatable-striped p-datatable-sm"
+      #dt
+    >
+      <ng-template #caption>
+        <div class="table-caption">
+          <span class="p-input-icon-start">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'admin.search' | translate" />
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="fullName">{{ 'admin.cols.name' | translate }} <p-sortIcon field="fullName" /></th>
+          <th>{{ 'admin.cols.nationalId' | translate }}</th>
+          <th pSortableColumn="phoneNumber">{{ 'admin.cols.phone' | translate }}</th>
+          <th>{{ 'admin.cols.address' | translate }}</th>
+          <th>{{ 'admin.cols.birthDate' | translate }}</th>
+          <th>{{ 'admin.cols.notes' | translate }}</th>
+          <th pSortableColumn="isActive">{{ 'admin.cols.status' | translate }}</th>
+          <th>{{ 'admin.cols.actions' | translate }}</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-item>
+        <tr>
+          <td class="font-semibold">{{ item.fullName }}</td>
+          <td class="text-muted">{{ item.nationalId }}</td>
+          <td>{{ item.phoneNumber }}</td>
+          <td>{{ item.address }}</td>
+          <td>{{ item.birthDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.notes }}</td>
+          <td>
+            <p-tag [value]="item.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
+                   [severity]="getStatusSeverity(item.isActive)" />
+          </td>
+          <td>
+            <div class="action-btns">
+              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info" (onClick)="openEditDialog(item)" [pTooltip]="'common.edit' | translate" />
+              <p-button
+                [icon]="item.isActive ? 'pi pi-ban' : 'pi pi-check-circle'"
+                [rounded]="true" [text]="true"
+                [severity]="item.isActive ? 'warn' : 'success'"
+                (onClick)="toggleStatus(item)"
+                [pTooltip]="item.isActive ? ('admin.deactivate' | translate) : ('admin.activate' | translate)"
+              />
+              <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(item)" [pTooltip]="'common.delete' | translate" />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr><td colspan="8" class="text-center p-4">{{ 'admin.noData' | translate }}</td></tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Add / Edit Dialog -->
+<p-dialog
+  [(visible)]="showDialog"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [style]="{ width: '42rem' }"
+  [header]="(isEditMode() ? 'admin.beneficiaries.editTitle' : 'admin.beneficiaries.addTitle') | translate"
+>
+  <form [formGroup]="form" class="dialog-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'admin.cols.name' | translate }}</label>
+        <input pInputText formControlName="fullName" />
+        @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
+          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+      <div class="form-group">
+        <label>{{ 'admin.cols.nationalId' | translate }}</label>
+        <input pInputText formControlName="nationalId" />
+        @if (form.get('nationalId')?.invalid && form.get('nationalId')?.touched) {
+          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'admin.cols.phone' | translate }}</label>
+        <input pInputText formControlName="phoneNumber" />
+        @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
+          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+      <div class="form-group">
+        <label>{{ 'admin.cols.address' | translate }}</label>
+        <input pInputText formControlName="address" />
+        @if (form.get('address')?.invalid && form.get('address')?.touched) {
+          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>تاريخ الميلاد</label>
+        <input pInputText type="date" formControlName="birthDate" />
+        @if (form.get('birthDate')?.invalid && form.get('birthDate')?.touched) {
+          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+      <div class="form-group">
+        <label>ملاحظات</label>
+        <input pInputText formControlName="notes" />
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button [label]="'common.cancel' | translate" icon="pi pi-times" [text]="true" (onClick)="showDialog.set(false)" />
+    <p-button [label]="'common.save' | translate" icon="pi pi-check" (onClick)="save()" />
+  </ng-template>
+</p-dialog>

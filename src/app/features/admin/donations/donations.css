@@ -1,0 +1,4 @@
+/* Shared styles for all admin CRUD pages */
+@import '../../../shared/admin-crud.css';
+
+.text-primary { color: var(--color-primary); }

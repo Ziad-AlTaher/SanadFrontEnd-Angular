@@ -1,0 +1,15 @@
+.git
+.gitignore
+.dockerignore
+.editorconfig
+.idea
+.vscode
+node_modules
+dist
+out-tsc
+tmp
+bazel-out
+npm-debug.log
+yarn-error.log
+/coverage
+/.angular/cache
