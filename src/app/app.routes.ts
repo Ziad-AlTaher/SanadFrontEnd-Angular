@@ -10,6 +10,7 @@ import { EmployeesComponent } from './features/admin/employees/employees';
 import { AssistanceComponent } from './features/admin/assistance/assistance';
 import { DonationsComponent } from './features/admin/donations/donations';
 import { AidTypesComponent } from './features/admin/aid-types/aid-types';
+import { AidDisbursementsComponent } from './features/admin/aid-disbursements/aid-disbursements';
 
 export const routes: Routes = [
     {
@@ -32,7 +33,8 @@ export const routes: Routes = [
             { path: 'employees', component: EmployeesComponent },
             { path: 'assistance', component: AssistanceComponent },
             { path: 'donations', component: DonationsComponent },
-            { path: 'aid-types', component: AidTypesComponent }
+            { path: 'aid-types', component: AidTypesComponent },
+            { path: 'aid-disbursements', component: AidDisbursementsComponent }
         ]
     },
     { path: '**', redirectTo: '' }

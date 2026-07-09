@@ -5,17 +5,17 @@
   <!-- Header -->
   <div class="page-header">
     <div>
-      <h1 class="page-title">{{ 'admin.nav.aidTypes' | translate }}</h1>
-      <p class="page-subtitle">{{ 'admin.aidTypes.subtitle' | translate }}</p>
+      <h1 class="page-title">{{ 'admin.nav.aidDisbursements' | translate }}</h1>
+      <p class="page-subtitle">{{ 'admin.aidDisbursements.subtitle' | translate }}</p>
     </div>
     <p-button [label]="'common.add' | translate" icon="pi pi-plus" (onClick)="openAddDialog()" />
   </div>
 
   <!-- Table -->
   <div class="table-card">
-    <p-table [value]="aidTypes()" [loading]="isLoading()" [paginator]="true" [rows]="10"
-      [rowsPerPageOptions]="[5, 10, 25]" [globalFilterFields]="['name', 'description']" dataKey="id"
-      styleClass="p-datatable-striped p-datatable-sm" #dt>
+    <p-table [value]="aidDisbursements()" [loading]="isLoading()" [paginator]="true" [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 25]" [globalFilterFields]="['beneficiaryName', 'aidTypeName', 'amount']"
+      dataKey="id" styleClass="p-datatable-striped p-datatable-sm" #dt>
       <ng-template #caption>
         <div class="table-caption">
           <span class="p-input-icon-start">
@@ -28,10 +28,13 @@
 
       <ng-template #header>
         <tr>
-          <th pSortableColumn="name">{{ 'admin.cols.name' | translate }} <p-sortIcon field="name" /></th>
-          <th pSortableColumn="defaultValue">{{ 'admin.cols.defaultValue' | translate }} <p-sortIcon
-              field="defaultValue" /></th>
-          <th>{{ 'admin.cols.description' | translate }}</th>
+          <th pSortableColumn="beneficiaryName">{{ 'admin.cols.beneficiaryName' | translate }} <p-sortIcon
+              field="beneficiaryName" /></th>
+          <th pSortableColumn="aidTypeName">{{ 'admin.cols.aidTypeName' | translate }} <p-sortIcon
+              field="aidTypeName" /></th>
+          <th pSortableColumn="amount">{{ 'admin.cols.amount' | translate }} <p-sortIcon field="amount" /></th>
+          <th pSortableColumn="disbursementDate">{{ 'admin.cols.date' | translate }} <p-sortIcon
+              field="disbursementDate" /></th>
           <th pSortableColumn="isActive">{{ 'admin.cols.status' | translate }}</th>
           <th>{{ 'admin.cols.actions' | translate }}</th>
         </tr>
@@ -39,9 +42,10 @@
 
       <ng-template #body let-item>
         <tr>
-          <td class="font-semibold">{{ item.name }}</td>
-          <td>{{ item.defaultValue | number }} ج.م</td>
-          <td class="text-muted">{{ item.description }}</td>
+          <td class="font-semibold">{{ item.beneficiaryName }}</td>
+          <td>{{ item.aidTypeName }}</td>
+          <td>{{ item.amount | number }} ج.م</td>
+          <td class="text-muted">{{ item.disbursementDate | date:'yyyy-MM-dd' }}</td>
           <td>
             <p-tag [value]="item.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
               [severity]="getStatusSeverity(item.isActive)" />
@@ -62,7 +66,7 @@
 
       <ng-template #emptymessage>
         <tr>
-          <td colspan="5" class="text-center p-4">{{ 'admin.noData' | translate }}</td>
+          <td colspan="6" class="text-center p-4">{{ 'admin.noData' | translate }}</td>
         </tr>
       </ng-template>
     </p-table>
@@ -71,20 +75,22 @@
 
 <!-- Add / Edit Dialog -->
 <p-dialog [(visible)]="showDialog" [modal]="true" [closable]="true" [draggable]="false" [style]="{ width: '42rem' }"
-  [header]="(isEditMode() ? 'تعديل نوع المساعدة' : 'إضافة نوع مساعدة جديد')">
+  [header]="(isEditMode() ? 'admin.aidDisbursements.editTitle' : 'admin.aidDisbursements.addTitle') | translate">
   <form [formGroup]="form" class="dialog-form">
     <div class="form-row">
       <div class="form-group">
-        <label>الاسم</label>
-        <input pInputText formControlName="name" />
-        @if (form.get('name')?.invalid && form.get('name')?.touched) {
+        <label>{{ 'admin.cols.beneficiaryName' | translate }}</label>
+        <p-select formControlName="beneficiaryId" [options]="beneficiaries()" optionLabel="fullName" optionValue="id"
+          [filter]="true" filterBy="fullName" placeholder="اختر المستحق" styleClass="w-full" appendTo="body" />
+        @if (form.get('beneficiaryId')?.invalid && form.get('beneficiaryId')?.touched) {
         <small class="form-error">{{ 'validation.required' | translate }}</small>
         }
       </div>
       <div class="form-group">
-        <label>القيمة الافتراضية</label>
-        <p-inputnumber formControlName="defaultValue" [min]="0" />
-        @if (form.get('defaultValue')?.invalid && form.get('defaultValue')?.touched) {
+        <label>{{ 'admin.cols.aidTypeName' | translate }}</label>
+        <p-select formControlName="aidTypeId" [options]="aidTypes()" optionLabel="name" optionValue="id" [filter]="true"
+          filterBy="name" placeholder="اختر نوع المساعدة" styleClass="w-full" appendTo="body" />
+        @if (form.get('aidTypeId')?.invalid && form.get('aidTypeId')?.touched) {
         <small class="form-error">{{ 'validation.required' | translate }}</small>
         }
       </div>
@@ -92,8 +98,18 @@
 
     <div class="form-row">
       <div class="form-group">
-        <label>الوصف</label>
-        <input pInputText formControlName="description" />
+        <label>{{ 'admin.cols.amount' | translate }}</label>
+        <p-inputnumber formControlName="amount" [min]="0" styleClass="w-full" />
+        @if (form.get('amount')?.invalid && form.get('amount')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+      <div class="form-group">
+        <label>{{ 'admin.cols.date' | translate }}</label>
+        <input pInputText type="date" formControlName="disbursementDate" class="w-full" />
+        @if (form.get('disbursementDate')?.invalid && form.get('disbursementDate')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
       </div>
     </div>
   </form>

@@ -253,7 +253,8 @@
             "employees": "Employees",
             "assistance": "Assistance",
             "donations": "Donations",
-            "aidTypes": "Aid Types"
+            "aidTypes": "Aid Types",
+            "aidDisbursements": "Aid Disbursements"
         },
         "stats": {
             "beneficiaries": "Beneficiaries",
@@ -284,6 +285,11 @@
             "addTitle": "Add New Assistance",
             "editTitle": "Edit Assistance"
         },
+        "aidDisbursements": {
+            "subtitle": "Manage disbursements and aid logs",
+            "addTitle": "Add New Aid Disbursement",
+            "editTitle": "Edit Aid Disbursement"
+        },
         "donations": {
             "subtitle": "Record of incoming donations",
             "addTitle": "Record New Donation",
@@ -310,6 +316,7 @@
             "department": "Department",
             "salary": "Salary",
             "beneficiaryName": "Beneficiary Name",
+            "aidTypeName": "Aid Type",
             "type": "Type",
             "amount": "Amount / Value",
             "description": "Description",

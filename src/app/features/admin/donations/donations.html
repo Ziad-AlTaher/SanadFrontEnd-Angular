@@ -121,7 +121,7 @@
       </div>
       <div class="form-group">
         <label>{{ 'admin.cols.amount' | translate }}</label>
-        <p-inputnumber formControlName="amount" [min]="0" prefix="ج.م " 
+        <p-inputnumber formControlName="amount" [min]="0" 
           [disabled]="form.get('type')?.value === 'in-kind'" 
           [class.p-disabled]="form.get('type')?.value === 'in-kind'" />
       </div>

@@ -253,7 +253,8 @@
             "employees": "الموظفين",
             "assistance": "المساعدات",
             "donations": "التبرعات",
-            "aidTypes": "أنواع المساعدات"
+            "aidTypes": "أنواع المساعدات",
+            "aidDisbursements": "صرف المساعدات"
         },
         "stats": {
             "beneficiaries": "المستحقين",
@@ -284,6 +285,11 @@
             "addTitle": "إضافة مساعدة جديدة",
             "editTitle": "تعديل المساعدة"
         },
+        "aidDisbursements": {
+            "subtitle": "إدارة وسجل عمليات صرف المساعدات للمستحقين",
+            "addTitle": "تسجيل عملية صرف مساعدة",
+            "editTitle": "تعديل عملية صرف المساعدة"
+        },
         "donations": {
             "subtitle": "سجل التبرعات الواردة",
             "addTitle": "تسجيل تبرع جديد",
@@ -310,6 +316,7 @@
             "department": "القسم",
             "salary": "الراتب",
             "beneficiaryName": "اسم المستفيد",
+            "aidTypeName": "نوع المساعدة",
             "type": "النوع",
             "amount": "المبلغ / القيمة",
             "description": "الوصف",
