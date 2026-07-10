@@ -79,23 +79,24 @@ export class DashboardComponent implements OnInit {
       this.stats.totalEmployees = employees.length;
       this.stats.totalDonations = donations.length;
       this.stats.totalAssistance = assistance.length;
-      this.stats.totalDonationsAmount = donations.reduce((sum, d) => sum + d.amount, 0);
+      this.stats.totalDonationsAmount = donations.reduce((sum, d) => sum + (d.amount || 0), 0);
 
-      // Donut - donations by status
-      const statusCounts = donations.reduce((acc: any, d) => {
-        acc[d.status] = (acc[d.status] || 0) + 1;
+      // Donut - donations by type
+      const typeCounts = donations.reduce((acc: any, d) => {
+        const typeLabel = d.donationType === 1 ? 'Cash' : d.donationType === 2 ? 'In-Kind' : 'Bank Transfer';
+        acc[typeLabel] = (acc[typeLabel] || 0) + 1;
         return acc;
       }, {});
-      this.donutSeries = Object.values(statusCounts) as number[];
-      this.donutLabels = Object.keys(statusCounts);
+      this.donutSeries = Object.values(typeCounts) as number[];
+      this.donutLabels = Object.keys(typeCounts);
 
       // Bar - assistance by type
-      const typeCounts = assistance.reduce((acc: any, a) => {
+      const typeCounts2 = assistance.reduce((acc: any, a) => {
         acc[a.type] = (acc[a.type] || 0) + a.amount;
         return acc;
       }, {});
-      this.barXAxis = { categories: Object.keys(typeCounts) };
-      this.barSeries = [{ name: 'قيمة المساعدات', data: Object.values(typeCounts) as number[] }];
+      this.barXAxis = { categories: Object.keys(typeCounts2) };
+      this.barSeries = [{ name: 'قيمة المساعدات', data: Object.values(typeCounts2) as number[] }];
     });
   }
 }

@@ -8,31 +8,20 @@
       <h1 class="page-title">{{ 'admin.nav.donations' | translate }}</h1>
       <p class="page-subtitle">{{ 'admin.donations.subtitle' | translate }}</p>
     </div>
-    <p-button
-      [label]="'common.add' | translate"
-      icon="pi pi-plus"
-      (onClick)="openAddDialog()"
-    />
+    <p-button [label]="'common.add' | translate" icon="pi pi-plus" (onClick)="openAddDialog()" />
   </div>
 
   <!-- Table -->
   <div class="table-card">
-    <p-table
-      [value]="donations()"
-      [loading]="isLoading()"
-      [paginator]="true"
-      [rows]="10"
-      [rowsPerPageOptions]="[5, 10, 25]"
-      [globalFilterFields]="['donorName', 'donorPhone', 'description']"
-      dataKey="id"
-      styleClass="p-datatable-striped p-datatable-sm"
-      #dt
-    >
+    <p-table [value]="donations()" [loading]="isLoading()" [paginator]="true" [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 25]" [globalFilterFields]="['donorName', 'amount']"
+      dataKey="id" styleClass="p-datatable-striped p-datatable-sm" #dt>
       <ng-template #caption>
         <div class="table-caption">
           <span class="p-input-icon-start">
             <i class="pi pi-search"></i>
-            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'admin.search' | translate" />
+            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+              [placeholder]="'admin.search' | translate" />
           </span>
         </div>
       </ng-template>
@@ -40,12 +29,10 @@
       <ng-template #header>
         <tr>
           <th pSortableColumn="donorName">{{ 'admin.cols.donorName' | translate }} <p-sortIcon field="donorName" /></th>
-          <th>{{ 'admin.cols.phone' | translate }}</th>
-          <th pSortableColumn="type">{{ 'admin.cols.type' | translate }} <p-sortIcon field="type" /></th>
           <th pSortableColumn="amount">{{ 'admin.cols.amount' | translate }} <p-sortIcon field="amount" /></th>
-          <th>{{ 'admin.cols.description' | translate }}</th>
-          <th pSortableColumn="date">{{ 'admin.cols.date' | translate }} <p-sortIcon field="date" /></th>
-          <th pSortableColumn="status">{{ 'admin.cols.status' | translate }}</th>
+          <th pSortableColumn="donationType">{{ 'admin.cols.type' | translate }} <p-sortIcon field="donationType" /></th>
+          <th pSortableColumn="donationDate">{{ 'admin.cols.date' | translate }} <p-sortIcon field="donationDate" /></th>
+          <th pSortableColumn="isActive">{{ 'admin.cols.status' | translate }}</th>
           <th>{{ 'admin.cols.actions' | translate }}</th>
         </tr>
       </ng-template>
@@ -53,90 +40,89 @@
       <ng-template #body let-item>
         <tr>
           <td class="font-semibold">{{ item.donorName }}</td>
-          <td>{{ item.donorPhone }}</td>
+          <td>{{ item.amount | number }} ج.م</td>
           <td>
-            <span class="flex align-items-center gap-2">
-              <i class="pi" [class.pi-money-bill]="item.type === 'cash'" [class.pi-box]="item.type === 'in-kind'"></i>
-              {{ item.type === 'cash' ? ('admin.donations.cash' | translate) : ('admin.donations.inkind' | translate) }}
-            </span>
+            <p-tag [value]="getDonationTypeLabel(item.donationType) | translate"
+              [severity]="getDonationTypeSeverity(item.donationType)" />
           </td>
-          <td class="text-center font-semibold text-primary">
-            {{ item.type === 'cash' ? (item.amount | number) + ' ج.م' : '-' }}
-          </td>
-          <td class="text-muted">{{ item.description }}</td>
-          <td>{{ item.date }}</td>
+          <td class="text-muted">{{ item.donationDate | date:'yyyy-MM-dd' }}</td>
           <td>
-            <p-tag [value]="getStatusLabel(item.status)"
-                   [severity]="getStatusSeverity(item.status)" />
+            <p-tag [value]="item.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
+              [severity]="getStatusSeverity(item.isActive)" />
           </td>
           <td>
             <div class="action-btns">
-              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info" (onClick)="openEditDialog(item)" [pTooltip]="'common.edit' | translate" />
-              <!-- Toggle status button -->
-              <p-button
-                [icon]="item.status === 'pending' ? 'pi pi-check' : 'pi pi-replay'"
-                [rounded]="true" [text]="true"
-                [severity]="item.status === 'pending' ? 'success' : 'warn'"
-                (onClick)="toggleStatus(item)"
-                [pTooltip]="item.status === 'pending' ? ('admin.receive' | translate) : ('admin.unreceive' | translate)"
-              />
-              <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(item)" [pTooltip]="'common.delete' | translate" />
+              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info"
+                (onClick)="openEditDialog(item)" [pTooltip]="'common.edit' | translate" />
+              <p-button [icon]="item.isActive ? 'pi pi-ban' : 'pi pi-check-circle'" [rounded]="true" [text]="true"
+                [severity]="item.isActive ? 'warn' : 'success'" (onClick)="toggleStatus(item)"
+                [pTooltip]="item.isActive ? ('admin.deactivate' | translate) : ('admin.activate' | translate)" />
+              <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+                (onClick)="confirmDelete(item)" [pTooltip]="'common.delete' | translate" />
             </div>
           </td>
         </tr>
       </ng-template>
 
       <ng-template #emptymessage>
-        <tr><td colspan="8" class="text-center p-4">{{ 'admin.noData' | translate }}</td></tr>
+        <tr>
+          <td colspan="6" class="text-center p-4">{{ 'admin.noData' | translate }}</td>
+        </tr>
       </ng-template>
     </p-table>
   </div>
 </div>
 
 <!-- Add / Edit Dialog -->
-<p-dialog
-  [(visible)]="showDialog"
-  [modal]="true"
-  [closable]="true"
-  [draggable]="false"
-  [style]="{ width: '42rem' }"
-  [header]="(isEditMode() ? 'admin.donations.editTitle' : 'admin.donations.addTitle') | translate"
->
+<p-dialog [(visible)]="showDialog" [modal]="true" [closable]="true" [draggable]="false" [style]="{ width: '42rem' }"
+  [header]="(isEditMode() ? 'admin.donations.editTitle' : 'admin.donations.addTitle') | translate">
   <form [formGroup]="form" class="dialog-form">
     <div class="form-row">
       <div class="form-group">
         <label>{{ 'admin.cols.donorName' | translate }}</label>
-        <input pInputText formControlName="donorName" />
+        <input pInputText formControlName="donorName" class="w-full" />
+        @if (form.get('donorName')?.invalid && form.get('donorName')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
       </div>
       <div class="form-group">
-        <label>{{ 'admin.cols.phone' | translate }}</label>
-        <input pInputText formControlName="donorPhone" />
+        <label>{{ 'admin.cols.amount' | translate }}</label>
+        <p-inputnumber formControlName="amount" [min]="0" styleClass="w-full" />
+        @if (form.get('amount')?.invalid && form.get('amount')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
         <label>{{ 'admin.cols.type' | translate }}</label>
-        <p-select formControlName="type" [options]="types" optionLabel="label" optionValue="value" appendTo="body" />
+        <p-select formControlName="donationType" [options]="donationTypes" optionLabel="label" optionValue="value"
+          styleClass="w-full" appendTo="body">
+          <ng-template #selectedItem let-selectedOption>
+            <span>{{ selectedOption.label | translate }}</span>
+          </ng-template>
+          <ng-template #item let-option>
+            <span>{{ option.label | translate }}</span>
+          </ng-template>
+        </p-select>
+        @if (form.get('donationType')?.invalid && form.get('donationType')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
       </div>
       <div class="form-group">
-        <label>{{ 'admin.cols.amount' | translate }}</label>
-        <p-inputnumber formControlName="amount" [min]="0" 
-          [disabled]="form.get('type')?.value === 'in-kind'" 
-          [class.p-disabled]="form.get('type')?.value === 'in-kind'" />
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group form-group-full">
-        <label>{{ 'admin.cols.description' | translate }}</label>
-        <input pInputText formControlName="description" />
+        <label>{{ 'admin.cols.date' | translate }}</label>
+        <input pInputText type="date" formControlName="donationDate" class="w-full" />
+        @if (form.get('donationDate')?.invalid && form.get('donationDate')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
       </div>
     </div>
   </form>
 
   <ng-template #footer>
-    <p-button [label]="'common.cancel' | translate" icon="pi pi-times" [text]="true" (onClick)="showDialog.set(false)" />
+    <p-button [label]="'common.cancel' | translate" icon="pi pi-times" [text]="true"
+      (onClick)="showDialog.set(false)" />
     <p-button [label]="'common.save' | translate" icon="pi pi-check" (onClick)="save()" />
   </ng-template>
 </p-dialog>

@@ -28,16 +28,6 @@ export interface Assistance {
   status: 'pending' | 'approved' | 'rejected' | 'delivered';
 }
 
-export interface Donation {
-  id: number;
-  donorName: string;
-  donorPhone: string;
-  amount: number;
-  type: 'cash' | 'in-kind';
-  description: string;
-  date: string;
-  status: 'pending' | 'received' | 'allocated';
-}
 
 export interface DashboardStats {
   totalBeneficiaries: number;

@@ -14,7 +14,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { DonationService } from '../../../core/services/donation.service';
-import { Donation } from '../../../core/models/admin.models';
+import { ReadDonationDto, DonationType } from '../../../core/models/donation.models';
 
 @Component({
   selector: 'app-donations',
@@ -35,23 +35,24 @@ export class DonationsComponent implements OnInit {
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
 
-  donations = signal<Donation[]>([]);
+  donations = signal<ReadDonationDto[]>([]);
   showDialog = signal(false);
   isEditMode = signal(false);
-  selectedId = signal<number | null>(null);
+  selectedId = signal<string | null>(null);
   isLoading = signal(false);
 
-  types = [
-    { label: 'نقدي (Cash)', value: 'cash' },
-    { label: 'عيني (In-kind)', value: 'in-kind' }
+  donationTypes = [
+    { label: 'admin.donations.cash', value: 1 },
+    { label: 'admin.donations.inkind', value: 2 },
+    { label: 'admin.donations.bankTransfer', value: 3 }
   ];
 
   form: FormGroup = this.fb.group({
-    donorName:   ['', [Validators.required]],
-    donorPhone:  ['', [Validators.required]],
-    type:        ['cash', [Validators.required]],
-    amount:      [0,  [Validators.required, Validators.min(0)]],
-    description: ['', [Validators.required]],
+    donorName:    ['', [Validators.required]],
+    amount:       [0,  [Validators.required, Validators.min(0)]],
+    donationType: [1,  [Validators.required]],
+    donationDate: [null, [Validators.required]],
+    isActive:     [true],
   });
 
   ngOnInit(): void {
@@ -60,23 +61,33 @@ export class DonationsComponent implements OnInit {
 
   loadData(): void {
     this.isLoading.set(true);
-    this.service.getAll().subscribe(data => {
-      this.donations.set(data);
-      this.isLoading.set(false);
+    this.service.getAll().subscribe({
+      next: (data) => {
+        this.donations.set(data);
+        this.isLoading.set(false);
+      },
+      error: () => this.isLoading.set(false)
     });
   }
 
   openAddDialog(): void {
     this.isEditMode.set(false);
     this.selectedId.set(null);
-    this.form.reset({ type: 'cash', amount: 0 });
+    this.form.reset({ donationType: 1, amount: 0, isActive: true, donationDate: new Date().toISOString().split('T')[0] });
     this.showDialog.set(true);
   }
 
-  openEditDialog(item: Donation): void {
+  openEditDialog(item: ReadDonationDto): void {
     this.isEditMode.set(true);
-    this.selectedId.set(item.id);
-    this.form.patchValue(item);
+    this.selectedId.set(item.id || null);
+    let formattedDate = item.donationDate;
+    if (formattedDate && formattedDate.includes('T')) {
+      formattedDate = formattedDate.split('T')[0];
+    }
+    this.form.patchValue({
+      ...item,
+      donationDate: formattedDate
+    });
     this.showDialog.set(true);
   }
 
@@ -84,33 +95,28 @@ export class DonationsComponent implements OnInit {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const value = this.form.value;
     if (this.isEditMode() && this.selectedId()) {
-      this.service.update(this.selectedId()!, value).subscribe(() => {
-        this.loadData();
+      this.service.update(this.selectedId()!, { ...value, id: this.selectedId()! }).subscribe((updatedItem) => {
+        this.donations.update(list => list.map(b => b.id === this.selectedId() ? updatedItem : b));
         this.showDialog.set(false);
         this.messageService.add({ severity: 'success', summary: 'تم الحفظ', detail: 'تم تعديل بيانات التبرع.' });
       });
     } else {
-      const newItem = { 
-        ...value, 
-        status: 'pending' as const, 
-        date: new Date().toISOString().split('T')[0]
-      };
-      this.service.create(newItem).subscribe(() => {
-        this.loadData();
+      this.service.create(value).subscribe((newItem) => {
+        this.donations.update(list => [newItem, ...list]);
         this.showDialog.set(false);
-        this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تم إضافة تبرع جديد.' });
+        this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تم تسجيل التبرع بنجاح.' });
       });
     }
   }
 
-  toggleStatus(item: Donation): void {
-    this.service.toggleStatus(item.id).subscribe(() => {
-      this.loadData();
+  toggleStatus(item: ReadDonationDto): void {
+    this.service.toggleStatus(item.id!).subscribe(() => {
+      this.donations.update(list => list.map(b => b.id === item.id ? { ...b, isActive: !b.isActive } : b));
       this.messageService.add({ severity: 'info', summary: 'تم التحديث', detail: 'تم تغيير حالة التبرع.' });
     });
   }
 
-  confirmDelete(item: Donation): void {
+  confirmDelete(item: ReadDonationDto): void {
     this.confirmationService.confirm({
       message: `هل تريد حذف تبرع "${item.donorName}"؟`,
       header: 'تأكيد الحذف',
@@ -119,29 +125,33 @@ export class DonationsComponent implements OnInit {
       rejectLabel: 'إلغاء',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.service.delete(item.id).subscribe(() => {
-          this.loadData();
+        this.service.delete(item.id!).subscribe(() => {
+          this.donations.update(list => list.filter(b => b.id !== item.id));
           this.messageService.add({ severity: 'warn', summary: 'تم الحذف', detail: 'تم حذف التبرع.' });
         });
       },
     });
   }
 
-  getStatusSeverity(status: string): 'info' | 'warn' | 'success' {
-    switch(status) {
-      case 'pending': return 'warn';
-      case 'received': return 'success';
-      case 'allocated': return 'info';
-      default: return 'info';
+  getStatusSeverity(isActive: boolean): 'success' | 'danger' {
+    return isActive ? 'success' : 'danger';
+  }
+
+  getDonationTypeLabel(type: DonationType): string {
+    switch (type) {
+      case DonationType.Cash: return 'admin.donations.cash';
+      case DonationType.InKind: return 'admin.donations.inkind';
+      case DonationType.BankTransfer: return 'admin.donations.bankTransfer';
+      default: return '';
     }
   }
 
-  getStatusLabel(status: string): string {
-    switch(status) {
-      case 'pending': return 'قيد الانتظار';
-      case 'received': return 'تم الاستلام';
-      case 'allocated': return 'تم التخصيص';
-      default: return status;
+  getDonationTypeSeverity(type: DonationType): 'success' | 'info' | 'warn' {
+    switch (type) {
+      case DonationType.Cash: return 'success';
+      case DonationType.InKind: return 'warn';
+      case DonationType.BankTransfer: return 'info';
+      default: return 'success';
     }
   }
 }

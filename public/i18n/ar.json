@@ -295,7 +295,8 @@
             "addTitle": "تسجيل تبرع جديد",
             "editTitle": "تعديل بيانات التبرع",
             "cash": "نقدي",
-            "inkind": "عيني"
+            "inkind": "عيني",
+            "bankTransfer": "تحويل بنكي"
         },
         "status": {
             "active": "نشط",

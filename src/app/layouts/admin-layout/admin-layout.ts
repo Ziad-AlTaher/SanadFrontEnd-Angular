@@ -34,9 +34,9 @@ export class AdminLayoutComponent {
     { labelKey: 'admin.nav.beneficiaries', icon: 'pi pi-users', route: '/admin/beneficiaries' },
     { labelKey: 'admin.nav.aidTypes', icon: 'pi pi-tags', route: '/admin/aid-types' },
     { labelKey: 'admin.nav.aidDisbursements', icon: 'pi pi-wallet', route: '/admin/aid-disbursements' },
+    { labelKey: 'admin.nav.donations', icon: 'pi pi-dollar', route: '/admin/donations' },
 
     { labelKey: 'admin.nav.employees', icon: 'pi pi-id-card', route: '/admin/employees' },
-    { labelKey: 'admin.nav.donations', icon: 'pi pi-dollar', route: '/admin/donations' },
     { labelKey: 'admin.nav.assistance', icon: 'pi pi-heart', route: '/admin/assistance' },
   ];
 

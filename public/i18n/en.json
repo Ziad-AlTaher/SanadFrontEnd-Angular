@@ -295,7 +295,8 @@
             "addTitle": "Record New Donation",
             "editTitle": "Edit Donation Details",
             "cash": "Cash",
-            "inkind": "In-kind"
+            "inkind": "In-kind",
+            "bankTransfer": "Bank Transfer"
         },
         "status": {
             "active": "Active",
