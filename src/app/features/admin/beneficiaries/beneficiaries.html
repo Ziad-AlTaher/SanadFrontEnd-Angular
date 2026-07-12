@@ -8,31 +8,25 @@
       <h1 class="page-title">{{ 'admin.nav.beneficiaries' | translate }}</h1>
       <p class="page-subtitle">{{ 'admin.beneficiaries.subtitle' | translate }}</p>
     </div>
-    <p-button
-      [label]="'common.add' | translate"
-      icon="pi pi-plus"
-      (onClick)="openAddDialog()"
-    />
+    <div class="action-btns">
+      <p-button label="Excel" icon="pi pi-file-excel" severity="success" (onClick)="exportExcel()" />
+      <p-button label="PDF" icon="pi pi-file-pdf" severity="danger" (onClick)="exportPdf()" />
+      <p-button [label]="'common.add' | translate" icon="pi pi-plus" (onClick)="openAddDialog()" />
+    </div>
   </div>
 
   <!-- Table -->
   <div class="table-card">
-    <p-table
-      [value]="beneficiaries()"
-      [loading]="isLoading()"
-      [paginator]="true"
-      [rows]="10"
+    <p-table [value]="beneficiaries()" [loading]="isLoading()" [paginator]="true" [rows]="10"
       [rowsPerPageOptions]="[5, 10, 25]"
-      [globalFilterFields]="['fullName', 'nationalId', 'phoneNumber', 'address', 'notes']"
-      dataKey="id"
-      styleClass="p-datatable-striped p-datatable-sm"
-      #dt
-    >
+      [globalFilterFields]="['fullName', 'nationalId', 'phoneNumber', 'address', 'notes']" dataKey="id"
+      styleClass="p-datatable-striped p-datatable-sm" #dt>
       <ng-template #caption>
         <div class="table-caption">
           <span class="p-input-icon-start">
             <i class="pi pi-search"></i>
-            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'admin.search' | translate" />
+            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+              [placeholder]="'admin.search' | translate" />
           </span>
         </div>
       </ng-template>
@@ -60,54 +54,57 @@
           <td>{{ item.notes }}</td>
           <td>
             <p-tag [value]="item.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
-                   [severity]="getStatusSeverity(item.isActive)" />
+              [severity]="getStatusSeverity(item.isActive)" />
           </td>
           <td>
             <div class="action-btns">
-              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info" (onClick)="openEditDialog(item)" [pTooltip]="'common.edit' | translate" />
-              <p-button
-                [icon]="item.isActive ? 'pi pi-ban' : 'pi pi-check-circle'"
-                [rounded]="true" [text]="true"
-                [severity]="item.isActive ? 'warn' : 'success'"
-                (onClick)="toggleStatus(item)"
-                [pTooltip]="item.isActive ? ('admin.deactivate' | translate) : ('admin.activate' | translate)"
-              />
-              <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(item)" [pTooltip]="'common.delete' | translate" />
+              <!-- Attachments Button -->
+              <p-button icon="pi pi-file" [rounded]="true" [text]="true" severity="secondary"
+                (onClick)="openAttachments(item)" [pTooltip]="'المرفقات'"
+                [label]="item.attachmentCount ? item.attachmentCount.toString() : '0'" styleClass="p-button-sm mr-1" />
+              <!-- Aid Disbursements Button -->
+              <p-button icon="pi pi-wallet" [rounded]="true" [text]="true" severity="help"
+                (onClick)="openAidDisbursements(item)" [pTooltip]="'صرف المساعدات'"
+                [label]="item.aidDisbursementCount ? item.aidDisbursementCount.toString() : '0'"
+                styleClass="p-button-sm mr-1" />
+              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info"
+                (onClick)="openEditDialog(item)" [pTooltip]="'common.edit' | translate" />
+              <p-button [icon]="item.isActive ? 'pi pi-ban' : 'pi pi-check-circle'" [rounded]="true" [text]="true"
+                [severity]="item.isActive ? 'warn' : 'success'" (onClick)="toggleStatus(item)"
+                [pTooltip]="item.isActive ? ('admin.deactivate' | translate) : ('admin.activate' | translate)" />
+              <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+                (onClick)="confirmDelete(item)" [pTooltip]="'common.delete' | translate" />
             </div>
           </td>
         </tr>
       </ng-template>
 
       <ng-template #emptymessage>
-        <tr><td colspan="8" class="text-center p-4">{{ 'admin.noData' | translate }}</td></tr>
+        <tr>
+          <td colspan="8" class="text-center p-4">{{ 'admin.noData' | translate }}</td>
+        </tr>
       </ng-template>
     </p-table>
   </div>
 </div>
 
 <!-- Add / Edit Dialog -->
-<p-dialog
-  [(visible)]="showDialog"
-  [modal]="true"
-  [closable]="true"
-  [draggable]="false"
-  [style]="{ width: '42rem' }"
-  [header]="(isEditMode() ? 'admin.beneficiaries.editTitle' : 'admin.beneficiaries.addTitle') | translate"
->
+<p-dialog [(visible)]="showDialog" [modal]="true" [closable]="true" [draggable]="false" [style]="{ width: '42rem' }"
+  [header]="(isEditMode() ? 'admin.beneficiaries.editTitle' : 'admin.beneficiaries.addTitle') | translate">
   <form [formGroup]="form" class="dialog-form">
     <div class="form-row">
       <div class="form-group">
         <label>{{ 'admin.cols.name' | translate }}</label>
         <input pInputText formControlName="fullName" />
         @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
-          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
         }
       </div>
       <div class="form-group">
         <label>{{ 'admin.cols.nationalId' | translate }}</label>
         <input pInputText formControlName="nationalId" />
         @if (form.get('nationalId')?.invalid && form.get('nationalId')?.touched) {
-          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
         }
       </div>
     </div>
@@ -117,14 +114,14 @@
         <label>{{ 'admin.cols.phone' | translate }}</label>
         <input pInputText formControlName="phoneNumber" />
         @if (form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched) {
-          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
         }
       </div>
       <div class="form-group">
         <label>{{ 'admin.cols.address' | translate }}</label>
         <input pInputText formControlName="address" />
         @if (form.get('address')?.invalid && form.get('address')?.touched) {
-          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
         }
       </div>
     </div>
@@ -134,7 +131,7 @@
         <label>تاريخ الميلاد</label>
         <input pInputText type="date" formControlName="birthDate" />
         @if (form.get('birthDate')?.invalid && form.get('birthDate')?.touched) {
-          <small class="form-error">{{ 'validation.required' | translate }}</small>
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
         }
       </div>
       <div class="form-group">
@@ -145,7 +142,135 @@
   </form>
 
   <ng-template #footer>
-    <p-button [label]="'common.cancel' | translate" icon="pi pi-times" [text]="true" (onClick)="showDialog.set(false)" />
+    <p-button [label]="'common.cancel' | translate" icon="pi pi-times" [text]="true"
+      (onClick)="showDialog.set(false)" />
     <p-button [label]="'common.save' | translate" icon="pi pi-check" (onClick)="save()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Attachments List Dialog -->
+<p-dialog [(visible)]="showAttachmentsDialog" [modal]="true" [closable]="true" [draggable]="false"
+  [style]="{ width: '50rem' }" [header]="'المرفقات لـ: ' + currentBeneficiary()?.fullName">
+  <div class="mb-3 d-flex justify-content-between align-items-center">
+    <p-button [label]="'إضافة مرفق جديد'" icon="pi pi-plus" styleClass="p-button-sm p-button-success"
+      (onClick)="openAddAttachmentDialog()" />
+  </div>
+
+  <p-table [value]="attachments()" [loading]="isAttachmentsLoading()" styleClass="p-datatable-striped p-datatable-sm">
+    <ng-template #header>
+      <tr>
+        <th>اسم الملف</th>
+        <th>نوع الملف</th>
+        <th>حالة النشاط</th>
+        <th>الإجراءات</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="font-semibold">{{ item.fileName }}</td>
+        <td>{{ getFileTypeLabel(item.fileType) }}</td>
+        <td>
+          <p-tag [value]="item.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
+            [severity]="getStatusSeverity(item.isActive)" />
+        </td>
+        <td>
+          <div class="action-btns">
+            <!-- Download Button -->
+            <p-button icon="pi pi-download" [rounded]="true" [text]="true" severity="success"
+              (onClick)="downloadAttachment(item)" [pTooltip]="'تحميل / عرض'" />
+            <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info"
+              (onClick)="openEditAttachmentDialog(item)" [pTooltip]="'تعديل'" />
+            <p-button [icon]="item.isActive ? 'pi pi-ban' : 'pi pi-check-circle'" [rounded]="true" [text]="true"
+              [severity]="item.isActive ? 'warn' : 'success'" (onClick)="toggleAttachmentStatus(item)"
+              [pTooltip]="item.isActive ? 'إلغاء التنشيط' : 'تنشيط'" />
+            <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+              (onClick)="confirmDeleteAttachment(item)" [pTooltip]="'حذف'" />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="4" class="text-center p-4">لا توجد مرفقات مسجلة لهذا المستحق.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <ng-template #footer>
+    <p-button [label]="'إغلاق'" icon="pi pi-times" [text]="true" (onClick)="showAttachmentsDialog.set(false)" />
+  </ng-template>
+</p-dialog>
+
+<!-- Add / Edit Attachment Form Dialog -->
+<p-dialog [(visible)]="showAttachmentFormDialog" [modal]="true" [closable]="true" [draggable]="false"
+  [style]="{ width: '35rem' }" [header]="isAttachmentEditMode() ? 'تعديل المرفق' : 'إضافة مرفق جديد'">
+  <form [formGroup]="attachmentForm" class="dialog-form">
+    <div class="form-group mb-3">
+      <label>اسم الملف (الوصف)</label>
+      <input pInputText formControlName="fileName" class="w-full" />
+      @if (attachmentForm.get('fileName')?.invalid && attachmentForm.get('fileName')?.touched) {
+      <small class="form-error">{{ 'validation.required' | translate }}</small>
+      }
+    </div>
+
+    <div class="form-group mb-3">
+      <label>نوع الملف</label>
+      <p-select formControlName="fileType" [options]="fileTypes" optionLabel="label" optionValue="value"
+        styleClass="w-full" appendTo="body" />
+    </div>
+
+    <div class="form-group mb-3">
+      <label>ملف المرفق</label>
+      <input #fileInput type="file" (change)="onAttachmentFileSelected($event)" class="w-full form-control" />
+      @if (!isAttachmentEditMode() && !attachmentFile) {
+      <small class="text-muted d-block mt-1">يرجى اختيار ملف لرفعه.</small>
+      } @else if (isAttachmentEditMode()) {
+      <small class="text-muted d-block mt-1">اختر ملفاً جديداً فقط إذا كنت ترغب في استبدال الملف الحالي.</small>
+      }
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button [label]="'إلغاء'" icon="pi pi-times" [text]="true" (onClick)="showAttachmentFormDialog.set(false)" />
+    <p-button [label]="'حفظ'" icon="pi pi-check" (onClick)="saveAttachment()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Aid Disbursements List Dialog -->
+<p-dialog [(visible)]="showAidDialog" [modal]="true" [closable]="true" [draggable]="false" [style]="{ width: '45rem' }"
+  [header]="'سجل صرف المساعدات لـ: ' + currentBeneficiary()?.fullName">
+  <p-table [value]="aidDisbursements()" [loading]="isAidLoading()" styleClass="p-datatable-striped p-datatable-sm">
+    <ng-template #header>
+      <tr>
+        <th>نوع المساعدة</th>
+        <th>القيمة</th>
+        <th>تاريخ الصرف</th>
+        <th>حالة النشاط</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-item>
+      <tr>
+        <td class="font-semibold">{{ item.aidTypeName }}</td>
+        <td>{{ item.amount | number }} ج.م</td>
+        <td class="text-muted">{{ item.disbursementDate | date:'yyyy-MM-dd' }}</td>
+        <td>
+          <p-tag [value]="item.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
+            [severity]="getStatusSeverity(item.isActive)" />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="4" class="text-center p-4">لا توجد عمليات صرف مساعدة مسجلة لهذا المستحق.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <ng-template #footer>
+    <p-button [label]="'إغلاق'" icon="pi pi-times" [text]="true" (onClick)="showAidDialog.set(false)" />
   </ng-template>
 </p-dialog>

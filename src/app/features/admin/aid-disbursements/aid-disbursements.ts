@@ -51,11 +51,11 @@ export class AidDisbursementsComponent implements OnInit {
   isLoading = signal(false);
 
   form: FormGroup = this.fb.group({
-    beneficiaryId:    [null, [Validators.required]],
-    aidTypeId:        [null, [Validators.required]],
-    amount:           [null, [Validators.required, Validators.min(0)]],
+    beneficiaryId: [null, [Validators.required]],
+    aidTypeId: [null, [Validators.required]],
+    amount: [null, [Validators.required, Validators.min(0)]],
     disbursementDate: [null, [Validators.required]],
-    isActive:         [true],
+    isActive: [true],
   });
 
   ngOnInit(): void {
@@ -103,7 +103,7 @@ export class AidDisbursementsComponent implements OnInit {
   save(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const value = this.form.value;
-    
+
     // Find names to update locally immediately
     const beneficiaryName = this.beneficiaries().find(b => b.id === value.beneficiaryId)?.fullName || '';
     const aidTypeName = this.aidTypes().find(a => a.id === value.aidTypeId)?.name || '';
@@ -151,5 +151,27 @@ export class AidDisbursementsComponent implements OnInit {
 
   getStatusSeverity(isActive: boolean): 'success' | 'danger' {
     return isActive ? 'success' : 'danger';
+  }
+
+  exportExcel(): void {
+    this.service.exportExcel().subscribe({
+      next: (blob) => {
+        const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(file);
+        window.open(url, '_blank');
+      },
+      error: () => this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تصدير ملف Excel.' })
+    });
+  }
+
+  exportPdf(): void {
+    this.service.exportPdf().subscribe({
+      next: (blob) => {
+        const file = new Blob([blob], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(file);
+        window.open(url, '_blank');
+      },
+      error: () => this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تصدير ملف PDF.' })
+    });
   }
 }

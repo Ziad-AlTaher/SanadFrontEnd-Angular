@@ -52,4 +52,16 @@ export abstract class BaseService<TRead, TWrite = TRead, TUpdate = TRead> {
             map(res => res.data)
         );
     }
+
+    exportExcel(filterDto: any = {}): Observable<Blob> {
+        return this.http.post(`${this.apiUrl}/${this.endpoint}/ExportExcel`, filterDto, {
+            responseType: 'blob'
+        });
+    }
+
+    exportPdf(filterDto: any = {}): Observable<Blob> {
+        return this.http.post(`${this.apiUrl}/${this.endpoint}/ExportPdf`, filterDto, {
+            responseType: 'blob'
+        });
+    }
 }

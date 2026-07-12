@@ -285,6 +285,9 @@
             "addTitle": "Add New Assistance",
             "editTitle": "Edit Assistance"
         },
+        "aidTypes": {
+            "subtitle": "Manage and categorize available aid types and grants"
+        },
         "aidDisbursements": {
             "subtitle": "Manage disbursements and aid logs",
             "addTitle": "Add New Aid Disbursement",

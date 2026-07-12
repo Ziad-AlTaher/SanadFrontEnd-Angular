@@ -51,9 +51,9 @@ export class AssistanceComponent implements OnInit {
   ];
 
   form: FormGroup = this.fb.group({
-    type:            ['مالية', [Validators.required]],
-    description:     ['', [Validators.required]],
-    amount:          [0,  [Validators.required, Validators.min(1)]],
+    type: ['مالية', [Validators.required]],
+    description: ['', [Validators.required]],
+    amount: [0, [Validators.required, Validators.min(1)]],
     beneficiaryName: ['', [Validators.required]],
   });
 
@@ -93,9 +93,9 @@ export class AssistanceComponent implements OnInit {
         this.messageService.add({ severity: 'success', summary: 'تم الحفظ', detail: 'تم تعديل بيانات المساعدة.' });
       });
     } else {
-      const newItem = { 
-        ...value, 
-        status: 'pending' as const, 
+      const newItem = {
+        ...value,
+        status: 'pending' as const,
         date: new Date().toISOString().split('T')[0],
         beneficiaryId: Math.floor(Math.random() * 100) + 1 // mock
       };
@@ -132,7 +132,7 @@ export class AssistanceComponent implements OnInit {
   }
 
   getStatusSeverity(status: string): 'info' | 'warn' | 'success' | 'danger' {
-    switch(status) {
+    switch (status) {
       case 'pending': return 'warn';
       case 'approved': return 'info';
       case 'delivered': return 'success';
@@ -142,7 +142,7 @@ export class AssistanceComponent implements OnInit {
   }
 
   getStatusLabel(status: string): string {
-    switch(status) {
+    switch (status) {
       case 'pending': return 'قيد المراجعة';
       case 'approved': return 'مقبولة';
       case 'delivered': return 'تم التسليم';

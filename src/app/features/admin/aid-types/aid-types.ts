@@ -42,10 +42,10 @@ export class AidTypesComponent implements OnInit {
   globalFilter = '';
 
   form: FormGroup = this.fb.group({
-    name:         ['', [Validators.required]],
+    name: ['', [Validators.required]],
     defaultValue: [null, [Validators.required, Validators.min(0)]],
-    description:  [''],
-    isActive:     [true],
+    description: [''],
+    isActive: [true],
   });
 
   ngOnInit(): void {
@@ -118,5 +118,27 @@ export class AidTypesComponent implements OnInit {
 
   getStatusSeverity(isActive: boolean): 'success' | 'danger' {
     return isActive ? 'success' : 'danger';
+  }
+
+  exportExcel(): void {
+    this.service.exportExcel().subscribe({
+      next: (blob) => {
+        const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(file);
+        window.open(url, '_blank');
+      },
+      error: () => this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تصدير ملف Excel.' })
+    });
+  }
+
+  exportPdf(): void {
+    this.service.exportPdf().subscribe({
+      next: (blob) => {
+        const file = new Blob([blob], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(file);
+        window.open(url, '_blank');
+      },
+      error: () => this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تصدير ملف PDF.' })
+    });
   }
 }

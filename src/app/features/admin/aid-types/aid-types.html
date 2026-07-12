@@ -8,7 +8,11 @@
       <h1 class="page-title">{{ 'admin.nav.aidTypes' | translate }}</h1>
       <p class="page-subtitle">{{ 'admin.aidTypes.subtitle' | translate }}</p>
     </div>
-    <p-button [label]="'common.add' | translate" icon="pi pi-plus" (onClick)="openAddDialog()" />
+    <div class="action-btns">
+      <p-button label="Excel" icon="pi pi-file-excel" severity="success" (onClick)="exportExcel()" />
+      <p-button label="PDF" icon="pi pi-file-pdf" severity="danger" (onClick)="exportPdf()" />
+      <p-button [label]="'common.add' | translate" icon="pi pi-plus" (onClick)="openAddDialog()" />
+    </div>
   </div>
 
   <!-- Table -->
