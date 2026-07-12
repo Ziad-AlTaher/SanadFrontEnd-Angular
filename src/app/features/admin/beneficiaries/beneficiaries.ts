@@ -21,6 +21,8 @@ import { ReadAttachmentDto, FileType } from '../../../core/models/attachment.mod
 import { ReadAidDisbursementDto } from '../../../core/models/aid-disbursement.models';
 import { environment } from '@env/environment';
 
+import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-beneficiaries',
   standalone: true,
@@ -29,7 +31,7 @@ import { environment } from '@env/environment';
     TableModule, ButtonModule, DialogModule,
     InputTextModule, InputNumberModule, TagModule,
     ToastModule, TooltipModule, ConfirmDialogModule, TranslatePipe,
-    SelectModule
+    SelectModule, RouterModule
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './beneficiaries.html',

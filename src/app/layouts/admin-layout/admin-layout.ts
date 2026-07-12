@@ -24,7 +24,7 @@ export class AdminLayoutComponent {
   private themeService = inject(ThemeService);
   private translationService = inject(TranslationService);
 
-  sidebarCollapsed = signal(false);
+  sidebarCollapsed = signal(typeof window !== 'undefined' && window.innerWidth <= 768);
 
   theme = this.themeService.theme;
   currentLang = this.translationService.currentLang;

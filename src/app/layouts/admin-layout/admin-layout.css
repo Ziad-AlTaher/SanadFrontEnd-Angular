@@ -203,18 +203,34 @@
 @media (max-width: 768px) {
   .admin-sidebar {
     position: fixed;
-    inset-block: 0;
-    inset-inline-start: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: auto;
     z-index: 200;
     transform: translateX(-100%);
+    transition: transform 0.3s ease, width 0.3s ease;
   }
 
   [dir="rtl"] .admin-sidebar {
+    left: auto;
+    right: 0;
     transform: translateX(100%);
   }
 
+  /* Show sidebar when expanded */
   .admin-wrapper:not(.sidebar-collapsed) .admin-sidebar {
     transform: translateX(0);
+    width: 16rem;
+  }
+
+  /* Hide sidebar completely on mobile when collapsed */
+  .admin-wrapper.sidebar-collapsed .admin-sidebar {
+    transform: translateX(-100%);
+  }
+
+  [dir="rtl"] .admin-wrapper.sidebar-collapsed .admin-sidebar {
+    transform: translateX(100%);
   }
 
   .admin-content {

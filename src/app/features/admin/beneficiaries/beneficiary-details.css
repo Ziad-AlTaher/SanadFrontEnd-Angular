@@ -1,0 +1,101 @@
+.print-container {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-xl);
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  direction: rtl;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+.detail-item.full-width {
+  grid-column: span 2;
+}
+
+.detail-item {
+  background: var(--bg-secondary, #f8f9fa);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color, #e9ecef);
+}
+
+.doc-divider {
+  border: 0;
+  border-top: 2px solid var(--primary-color, #3b82f6);
+}
+
+.signature-line {
+  border-bottom: 1px dashed #000;
+  width: 150px;
+  height: 30px;
+  margin: 0 auto;
+}
+
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-color: #f1f3f5;
+  color: #495057;
+}
+
+.status-badge.active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+/* Print CSS */
+@media print {
+  body {
+    background: white !important;
+    color: #000000 !important;
+  }
+
+  .admin-sidebar,
+  .admin-topbar,
+  .no-print {
+    display: none !important;
+  }
+
+  .admin-main,
+  .admin-content,
+  .print-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .detail-item {
+    background: #fff !important;
+    border: 1px solid #000 !important;
+  }
+
+  .doc-divider {
+    border-top: 2px solid #000 !important;
+  }
+
+  .section-title {
+    border-bottom: 2px solid #000 !important;
+  }
+
+  /* Force page breaks rules */
+  .doc-section {
+    page-break-inside: avoid;
+  }
+}

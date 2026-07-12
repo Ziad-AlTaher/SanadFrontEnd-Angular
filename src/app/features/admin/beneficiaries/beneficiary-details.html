@@ -1,0 +1,110 @@
+<p-toast position="top-center" />
+
+<div class="print-container">
+  <!-- Back / Print Actions (No Print in CSS) -->
+  <div class="actions-header no-print mb-4 d-flex justify-content-between align-items-center">
+    <button pButton [label]="'الرجوع لقائمة المستحقين'" icon="pi pi-arrow-right" class="p-button-secondary p-button-outlined" [routerLink]="['/admin/beneficiaries']"></button>
+    <div class="right-actions d-flex gap-2">
+      <button pButton [label]="showDisbursements() ? 'إخفاء سجل الصرف' : 'إظهار سجل الصرف'" 
+              [icon]="showDisbursements() ? 'pi pi-eye-slash' : 'pi pi-eye'" 
+              class="p-button-info p-button-outlined" 
+              (click)="toggleDisbursements()"></button>
+      <button pButton [label]="'طباعة التقرير (A4)'" icon="pi pi-print" class="p-button-success" (click)="printPage()"></button>
+    </div>
+  </div>
+
+  <!-- Document/Receipt Header -->
+  <div class="doc-header d-flex justify-content-between align-items-start mb-4">
+    <div class="doc-logo-title">
+      <h2 class="m-0 text-primary">مؤسسة سند الخيرية</h2>
+      <p class="text-muted m-0">تقرير بيانات مستحق تفصيلي</p>
+    </div>
+    <div class="doc-meta text-end">
+      <p class="m-0"><strong>تاريخ التقرير:</strong> {{ today | date:'yyyy-MM-dd' }}</p>
+      <p class="m-0 mt-1"><strong>حالة المستحق:</strong> 
+        <p-tag [value]="beneficiary()?.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
+               [severity]="getStatusSeverity(beneficiary()?.isActive)" />
+      </p>
+    </div>
+  </div>
+
+  <hr class="doc-divider mb-4" />
+
+  <!-- Beneficiary Information Grid -->
+  <div class="doc-section mb-4">
+    <h3 class="section-title border-bottom pb-2 mb-3 text-secondary">البيانات الأساسية للمستحق</h3>
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="label font-bold text-muted d-block">الاسم الكامل:</span>
+        <span class="value font-semibold fs-5 text-dark">{{ beneficiary()?.fullName }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label font-bold text-muted d-block">الرقم القومي:</span>
+        <span class="value text-dark">{{ beneficiary()?.nationalId }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label font-bold text-muted d-block">رقم الهاتف:</span>
+        <span class="value text-dark">{{ beneficiary()?.phoneNumber }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label font-bold text-muted d-block">العنوان الحالي:</span>
+        <span class="value text-dark">{{ beneficiary()?.address }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label font-bold text-muted d-block">تاريخ الميلاد:</span>
+        <span class="value text-dark">{{ beneficiary()?.birthDate | date:'yyyy-MM-dd' }}</span>
+      </div>
+      <div class="detail-item full-width mt-2">
+        <span class="label font-bold text-muted d-block">ملاحظات:</span>
+        <span class="value text-dark">{{ beneficiary()?.notes || 'لا توجد ملاحظات.' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aid Disbursements Table -->
+  <div class="doc-section mb-4" *ngIf="showDisbursements()">
+    <h3 class="section-title border-bottom pb-2 mb-3 text-secondary">سجل صرف المساعدات المالية والعينية</h3>
+    
+    <p-table [value]="aidDisbursements()" [loading]="isAidLoading()" styleClass="p-datatable-striped p-datatable-sm doc-table">
+      <ng-template #header>
+        <tr>
+          <th>نوع المساعدة</th>
+          <th>القيمة</th>
+          <th>تاريخ الصرف</th>
+          <th>الحالة</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-item>
+        <tr>
+          <td class="font-semibold">{{ item.aidTypeName }}</td>
+          <td>{{ item.amount | number }} ج.م</td>
+          <td class="text-muted">{{ item.disbursementDate | date:'yyyy-MM-dd' }}</td>
+          <td>
+            <span class="status-badge" [class.active]="item.isActive">
+              {{ item.isActive ? 'نشط' : 'غير نشط' }}
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="4" class="text-center p-4">لا توجد عمليات صرف مساعدة مسجلة لهذا المستحق.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Document Footer (Signature Area for official printing) -->
+  <div class="doc-footer d-flex justify-content-between mt-5 pt-4">
+    <div class="signature-box text-center">
+      <p class="m-0 font-semibold">توقيع مسؤول الجمعية</p>
+      <div class="signature-line mt-4"></div>
+    </div>
+    <div class="signature-box text-center">
+      <p class="m-0 font-semibold">توقيع المدير التنفيذي</p>
+      <div class="signature-line mt-4"></div>
+    </div>
+  </div>
+</div>

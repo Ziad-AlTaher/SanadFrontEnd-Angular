@@ -67,6 +67,9 @@
                 (onClick)="openAidDisbursements(item)" [pTooltip]="'صرف المساعدات'"
                 [label]="item.aidDisbursementCount ? item.aidDisbursementCount.toString() : '0'"
                 styleClass="p-button-sm mr-1" />
+              <!-- Details/Print Button -->
+              <p-button icon="pi pi-print" [rounded]="true" [text]="true" severity="success"
+                [routerLink]="['/admin/beneficiaries', item.id]" [pTooltip]="'تفاصيل / طباعة'" />
               <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info"
                 (onClick)="openEditDialog(item)" [pTooltip]="'common.edit' | translate" />
               <p-button [icon]="item.isActive ? 'pi pi-ban' : 'pi pi-check-circle'" [rounded]="true" [text]="true"

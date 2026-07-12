@@ -6,6 +6,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
 import { DashboardComponent } from './features/admin/dashboard/dashboard';
 import { BeneficiariesComponent } from './features/admin/beneficiaries/beneficiaries';
+import { BeneficiaryDetailsComponent } from './features/admin/beneficiaries/beneficiary-details';
 import { EmployeesComponent } from './features/admin/employees/employees';
 import { AssistanceComponent } from './features/admin/assistance/assistance';
 import { DonationsComponent } from './features/admin/donations/donations';
@@ -30,6 +31,7 @@ export const routes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
             { path: 'dashboard', component: DashboardComponent },
             { path: 'beneficiaries', component: BeneficiariesComponent },
+            { path: 'beneficiaries/:id', component: BeneficiaryDetailsComponent },
             { path: 'employees', component: EmployeesComponent },
             { path: 'assistance', component: AssistanceComponent },
             { path: 'donations', component: DonationsComponent },

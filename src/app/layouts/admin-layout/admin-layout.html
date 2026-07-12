@@ -4,28 +4,24 @@
     <!-- Logo Area -->
     <div class="sidebar-logo">
       @if (!sidebarCollapsed()) {
-        <span class="logo-text">{{ 'admin.title' | translate }}</span>
+      <span class="logo-text">{{ 'admin.title' | translate }}</span>
       }
       <button class="collapse-btn" (click)="toggleSidebar()">
         <i class="pi" [class.pi-angle-right]="currentLang() === 'ar' ? !sidebarCollapsed() : sidebarCollapsed()"
-           [class.pi-angle-left]="currentLang() === 'ar' ? sidebarCollapsed() : !sidebarCollapsed()"></i>
+          [class.pi-angle-left]="currentLang() === 'ar' ? sidebarCollapsed() : !sidebarCollapsed()"></i>
       </button>
     </div>
 
     <!-- Navigation -->
     <nav class="sidebar-nav">
       @for (item of navItems; track item.route) {
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="nav-item-active"
-          class="nav-item"
-          [title]="item.labelKey | translate"
-        >
-          <i [class]="item.icon" class="nav-icon"></i>
-          @if (!sidebarCollapsed()) {
-            <span class="nav-label">{{ item.labelKey | translate }}</span>
-          }
-        </a>
+      <a [routerLink]="item.route" routerLinkActive="nav-item-active" class="nav-item"
+        [title]="item.labelKey | translate">
+        <i [class]="item.icon" class="nav-icon"></i>
+        @if (!sidebarCollapsed()) {
+        <span class="nav-label">{{ item.labelKey | translate }}</span>
+        }
+      </a>
       }
     </nav>
   </aside>
