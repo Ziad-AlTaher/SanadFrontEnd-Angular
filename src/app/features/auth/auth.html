@@ -14,18 +14,14 @@
         <div class="auth-form-wrapper">
             <h2 class="auth-heading">{{ 'auth.accessAccount' | translate }}</h2>
 
-            <!-- Tab Navigation -->
-            <div class="auth-tabs">
-                <button class="auth-tab" [class.active]="activeTab() === 'login'" (click)="switchTab('login')">
+            <!-- Tab Navigation - Only Login now -->
+            <div class="auth-tabs justify-content-center">
+                <button class="auth-tab active" style="width: 100%; text-align: center; cursor: default;">
                     {{ 'auth.login' | translate }}
-                </button>
-                <button class="auth-tab" [class.active]="activeTab() === 'register'" (click)="switchTab('register')">
-                    {{ 'auth.register' | translate }}
                 </button>
             </div>
 
             <!-- ═══════ Login Form ═══════ -->
-            @if (activeTab() === 'login') {
             <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
                 <!-- Email -->
                 <div class="form-group">
@@ -69,131 +65,9 @@
                     [disabled]="isLoading">
                 </p-button>
             </form>
-            }
-
-            <!-- ═══════ Register Form ═══════ -->
-            @if (activeTab() === 'register') {
-            <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="auth-form">
-                <!-- First Name -->
-                <div class="form-group">
-                    <label for="reg-firstName">{{ 'auth.firstName' | translate }}</label>
-                    <input pInputText id="reg-firstName" formControlName="firstName" type="text" class="w-full auth-input"
-                        [class.ng-invalid]="rf['firstName'].invalid && (rf['firstName'].touched || submitted())"
-                        [class.ng-dirty]="rf['firstName'].touched || submitted()" />
-                    @if (rf['firstName'].invalid && (rf['firstName'].touched || submitted())) {
-                    <small class="error-msg">
-                        @if (rf['firstName'].errors?.['required']) {
-                        {{ 'validation.required' | translate }}
-                        } @else if (rf['firstName'].errors?.['minlength']) {
-                        {{ 'validation.minLength' | translate }} (2)
-                        } @else if (rf['firstName'].errors?.['maxlength']) {
-                        {{ 'validation.maxLength' | translate }} (50)
-                        }
-                    </small>
-                    }
-                </div>
-
-                <!-- Last Name -->
-                <div class="form-group">
-                    <label for="reg-lastName">{{ 'auth.lastName' | translate }}</label>
-                    <input pInputText id="reg-lastName" formControlName="lastName" type="text" class="w-full auth-input"
-                        [class.ng-invalid]="rf['lastName'].invalid && (rf['lastName'].touched || submitted())"
-                        [class.ng-dirty]="rf['lastName'].touched || submitted()" />
-                    @if (rf['lastName'].invalid && (rf['lastName'].touched || submitted())) {
-                    <small class="error-msg">
-                        @if (rf['lastName'].errors?.['required']) {
-                        {{ 'validation.required' | translate }}
-                        } @else if (rf['lastName'].errors?.['minlength']) {
-                        {{ 'validation.minLength' | translate }} (2)
-                        } @else if (rf['lastName'].errors?.['maxlength']) {
-                        {{ 'validation.maxLength' | translate }} (50)
-                        }
-                    </small>
-                    }
-                </div>
-
-                <!-- Email -->
-                <div class="form-group">
-                    <label for="reg-email">{{ 'auth.email' | translate }}</label>
-                    <input pInputText id="reg-email" formControlName="email" type="email" class="w-full auth-input"
-                        [class.ng-invalid]="rf['email'].invalid && (rf['email'].touched || submitted())"
-                        [class.ng-dirty]="rf['email'].touched || submitted()" />
-                    @if (rf['email'].invalid && (rf['email'].touched || submitted())) {
-                    <small class="error-msg">
-                        @if (rf['email'].errors?.['required']) {
-                        {{ 'validation.required' | translate }}
-                        } @else if (rf['email'].errors?.['email']) {
-                        {{ 'validation.email' | translate }}
-                        }
-                    </small>
-                    }
-                </div>
-
-                <!-- Password -->
-                <div class="form-group">
-                    <label for="reg-password">{{ 'auth.password' | translate }}</label>
-                    <p-password id="reg-password" formControlName="password" [toggleMask]="true" [feedback]="false"
-                        styleClass="w-full" inputStyleClass="w-full auth-input"
-                        [class.ng-invalid]="rf['password'].invalid && (rf['password'].touched || submitted())"
-                        [class.ng-dirty]="rf['password'].touched || submitted()">
-                    </p-password>
-                    @if (rf['password'].invalid && (rf['password'].touched || submitted())) {
-                    <small class="error-msg">
-                        @if (rf['password'].errors?.['required']) {
-                        {{ 'validation.required' | translate }}
-                        } @else if (rf['password'].errors?.['minlength']) {
-                        {{ 'validation.minLength' | translate }} (6)
-                        }
-                    </small>
-                    }
-                </div>
-
-                <!-- Confirm Password -->
-                <div class="form-group">
-                    <label for="reg-confirmPassword">{{ 'auth.confirmPassword' | translate }}</label>
-                    <p-password id="reg-confirmPassword" formControlName="confirmPassword" [toggleMask]="true" [feedback]="false"
-                        styleClass="w-full" inputStyleClass="w-full auth-input"
-                        [class.ng-invalid]="rf['confirmPassword'].invalid && (rf['confirmPassword'].touched || submitted())"
-                        [class.ng-dirty]="rf['confirmPassword'].touched || submitted()">
-                    </p-password>
-                    @if (rf['confirmPassword'].invalid && (rf['confirmPassword'].touched || submitted())) {
-                    <small class="error-msg">
-                        @if (rf['confirmPassword'].errors?.['required']) {
-                        {{ 'validation.required' | translate }}
-                        } @else if (rf['confirmPassword'].errors?.['minlength']) {
-                        {{ 'validation.minLength' | translate }} (6)
-                        }
-                    </small>
-                    }
-                </div>
-
-                <!-- Submit -->
-                <p-button type="submit" [label]="(isLoading ? 'common.loading' : 'auth.registerBtn') | translate"
-                    icon="pi pi-user-plus" [loading]="isLoading" styleClass="w-full auth-submit-btn" severity="primary"
-                    [disabled]="isLoading">
-                </p-button>
-            </form>
-            }
-
-            <!-- Social Login Divider -->
-            <div class="social-divider">
-                <span>{{ 'auth.orContinue' | translate }}</span>
-            </div>
-
-            <!-- Social Login Buttons -->
-            <div class="social-buttons">
-                <button class="social-btn google-btn" (click)="loginWithGoogle()">
-                    <i class="pi pi-google"></i>
-                    {{ 'auth.google' | translate }}
-                </button>
-                <button class="social-btn github-btn" (click)="loginWithGitHub()">
-                    <i class="pi pi-github"></i>
-                    {{ 'auth.github' | translate }}
-                </button>
-            </div>
 
             <!-- Back to Home Button -->
-            <div class="back-to-home-container">
+            <div class="back-to-home-container mt-4">
                 <button class="back-to-home-btn" (click)="goToHome()">
                     <i class="pi pi-home"></i>
                     <span>{{ 'auth.backToHome' | translate }}</span>

@@ -71,7 +71,6 @@
           <th>نوع المساعدة</th>
           <th>القيمة</th>
           <th>تاريخ الصرف</th>
-          <th>الحالة</th>
         </tr>
       </ng-template>
 
@@ -80,17 +79,12 @@
           <td class="font-semibold">{{ item.aidTypeName }}</td>
           <td>{{ item.amount | number }} ج.م</td>
           <td class="text-muted">{{ item.disbursementDate | date:'yyyy-MM-dd' }}</td>
-          <td>
-            <span class="status-badge" [class.active]="item.isActive">
-              {{ item.isActive ? 'نشط' : 'غير نشط' }}
-            </span>
-          </td>
         </tr>
       </ng-template>
 
       <ng-template #emptymessage>
         <tr>
-          <td colspan="4" class="text-center p-4">لا توجد عمليات صرف مساعدة مسجلة لهذا المستحق.</td>
+          <td colspan="3" class="text-center p-4">لا توجد عمليات صرف مساعدة مسجلة لهذا المستحق.</td>
         </tr>
       </ng-template>
     </p-table>

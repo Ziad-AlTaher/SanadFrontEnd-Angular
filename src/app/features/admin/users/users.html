@@ -1,0 +1,182 @@
+<p-toast position="top-center" />
+<p-confirmDialog />
+
+<div class="crud-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">إدارة المستخدمين</h1>
+      <p class="page-subtitle">إدارة الحسابات والأدوار وتعيين كلمات المرور للمستخدمين</p>
+    </div>
+    <div class="action-btns">
+      <p-button [label]="'common.add' | translate" icon="pi pi-plus" (onClick)="openAddDialog()" />
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <p-table [value]="users()" [loading]="isLoading()" [paginator]="true" [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 25]" [globalFilterFields]="['userName', 'email', 'phoneNumber']"
+      dataKey="id" styleClass="p-datatable-striped p-datatable-sm" #dt>
+      <ng-template #caption>
+        <div class="table-caption">
+          <span class="p-input-icon-start">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+              [placeholder]="'admin.search' | translate" />
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="userName">اسم المستخدم <p-sortIcon field="userName" /></th>
+          <th pSortableColumn="email">البريد الإلكتروني <p-sortIcon field="email" /></th>
+          <th>رقم الهاتف</th>
+          <th>العنوان</th>
+          <th>الصلاحيات</th>
+          <th pSortableColumn="isActive">الحالة</th>
+          <th>الإجراءات</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-item>
+        <tr>
+          <td class="font-semibold">{{ item.userName }}</td>
+          <td>{{ item.email }}</td>
+          <td>{{ item.phoneNumber }}</td>
+          <td>{{ item.address }}</td>
+          <td>
+            <div class="d-flex gap-1 flex-wrap">
+              @for (role of item.roles; track role) {
+                <span class="p-tag p-tag-info" style="margin-right: 2px;">{{ role }}</span>
+              }
+            </div>
+          </td>
+          <td>
+            <p-tag [value]="item.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
+              [severity]="getStatusSeverity(item.isActive)" />
+          </td>
+          <td>
+            <div class="action-btns">
+              <!-- Send Reset Password SMS -->
+              <p-button icon="pi pi-key" [rounded]="true" [text]="true" severity="help"
+                (onClick)="resetPasswordSms(item)" [pTooltip]="'إرسال رسالة إعادة تعيين كلمة المرور'" />
+              <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info"
+                (onClick)="openEditDialog(item)" [pTooltip]="'common.edit' | translate" />
+              <p-button [icon]="item.isActive ? 'pi pi-ban' : 'pi pi-check-circle'" [rounded]="true" [text]="true"
+                [severity]="item.isActive ? 'warn' : 'success'" (onClick)="toggleStatus(item)"
+                [pTooltip]="item.isActive ? ('admin.deactivate' | translate) : ('admin.activate' | translate)" />
+              <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+                (onClick)="confirmDelete(item)" [pTooltip]="'common.delete' | translate" />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="7" class="text-center p-4">لا يوجد مستخدمين مسجلين.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Add / Edit Dialog -->
+<p-dialog [(visible)]="showDialog" [modal]="true" [closable]="true" [draggable]="false" [style]="{ width: '42rem' }"
+  [header]="isEditMode() ? 'تعديل بيانات المستخدم' : 'إضافة مستخدم جديد'">
+  <form [formGroup]="form" class="dialog-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label>اسم المستخدم</label>
+        <input pInputText formControlName="userName" />
+        @if (form.get('userName')?.invalid && form.get('userName')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+      <div class="form-group">
+        <label>البريد الإلكتروني</label>
+        <input pInputText formControlName="email" type="email" />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <small class="form-error">
+          @if (form.get('email')?.errors?.['required']) {
+            {{ 'validation.required' | translate }}
+          } @else {
+            {{ 'validation.email' | translate }}
+          }
+        </small>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>رقم الهاتف</label>
+        <input pInputText formControlName="phoneNumber" />
+      </div>
+      <div class="form-group">
+        <label>العنوان</label>
+        <input pInputText formControlName="address" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>الجنسية</label>
+        <input pInputText formControlName="nationality" />
+      </div>
+      <div class="form-group">
+        <label>أدوار الصلاحيات</label>
+        <div class="d-flex gap-3 align-items-center mt-2">
+          <label class="d-flex align-items-center gap-1">
+            <input type="checkbox" (change)="onRoleChange('Admin', $event)" [checked]="hasRole('Admin')" /> Admin
+          </label>
+          <label class="d-flex align-items-center gap-1">
+            <input type="checkbox" (change)="onRoleChange('User', $event)" [checked]="hasRole('User')" /> User
+          </label>
+          <label class="d-flex align-items-center gap-1">
+            <input type="checkbox" (change)="onRoleChange('Employee', $event)" [checked]="hasRole('Employee')" /> Employee
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row" *ngIf="!isEditMode() || form.get('password')?.value">
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input pInputText type="password" formControlName="password" />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+        <small class="form-error">
+          @if (form.get('password')?.errors?.['required']) {
+            {{ 'validation.required' | translate }}
+          } @else {
+            {{ 'validation.minLength' | translate }} (6)
+          }
+        </small>
+        }
+      </div>
+      <div class="form-group">
+        <label>تأكيد كلمة المرور</label>
+        <input pInputText type="password" formControlName="confirmPassword" />
+        @if (form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group form-group-full">
+        <label class="d-flex align-items-center gap-1 mt-2">
+          <input type="checkbox" formControlName="forcePasswordChange" /> إجبار المستخدم على تغيير كلمة المرور عند تسجيل الدخول
+        </label>
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button [label]="'common.cancel' | translate" icon="pi pi-times" [text]="true"
+      (onClick)="showDialog.set(false)" />
+    <p-button [label]="'common.save' | translate" icon="pi pi-check" (onClick)="save()" />
+  </ng-template>
+</p-dialog>

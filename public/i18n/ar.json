@@ -254,12 +254,14 @@
             "assistance": "المساعدات",
             "donations": "التبرعات",
             "aidTypes": "أنواع المساعدات",
-            "aidDisbursements": "صرف المساعدات"
+            "aidDisbursements": "صرف المساعدات",
+            "users": "إدارة المستخدمين"
         },
         "stats": {
             "beneficiaries": "المستحقين",
             "active": "نشط",
             "employees": "إجمالي الموظفين",
+            "users": "إجمالي المستخدمين",
             "donations": "إجمالي التبرعات (عدد)",
             "donationsAmount": "إجمالي التبرعات",
             "donationsCount": "عملية تبرع",

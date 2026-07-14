@@ -4,7 +4,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { CardModule } from 'primeng/card';
 import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { BeneficiaryService } from '../../../core/services/beneficiary.service';
-import { EmployeeService } from '../../../core/services/employee.service';
+import { UserService } from '../../../core/services/user.service';
 import { AssistanceService } from '../../../core/services/assistance.service';
 import { DonationService } from '../../../core/services/donation.service';
 import { forkJoin } from 'rxjs';
@@ -19,14 +19,14 @@ import type { ApexChart, ApexNonAxisChartSeries, ApexAxisChartSeries, ApexXAxis,
 })
 export class DashboardComponent implements OnInit {
   private beneficiaryService = inject(BeneficiaryService);
-  private employeeService = inject(EmployeeService);
+  private userService = inject(UserService);
   private assistanceService = inject(AssistanceService);
   private donationService = inject(DonationService);
 
   stats = {
     totalBeneficiaries: 0,
     activeBeneficiaries: 0,
-    totalEmployees: 0,
+    totalUsers: 0,
     totalDonations: 0,
     totalAssistance: 0,
     totalDonationsAmount: 0,
@@ -62,7 +62,7 @@ export class DashboardComponent implements OnInit {
 
   statCards = [
     { key: 'totalBeneficiaries', icon: 'pi pi-users', colorClass: 'green', valueKey: 'totalBeneficiaries', labelKey: 'admin.stats.beneficiaries' },
-    { key: 'totalEmployees', icon: 'pi pi-id-card', colorClass: 'blue', valueKey: 'totalEmployees', labelKey: 'admin.stats.employees' },
+    { key: 'totalUsers', icon: 'pi pi-user', colorClass: 'blue', valueKey: 'totalUsers', labelKey: 'admin.stats.users' },
     { key: 'totalDonations', icon: 'pi pi-dollar', colorClass: 'amber', valueKey: 'totalDonations', labelKey: 'admin.stats.donations' },
     { key: 'totalAssistance', icon: 'pi pi-heart', colorClass: 'rose', valueKey: 'totalAssistance', labelKey: 'admin.stats.assistance' },
   ];
@@ -70,13 +70,13 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     forkJoin({
       beneficiaries: this.beneficiaryService.getAll(),
-      employees: this.employeeService.getAll(),
+      users: this.userService.getAll(),
       donations: this.donationService.getAll(),
       assistance: this.assistanceService.getAll(),
-    }).subscribe(({ beneficiaries, employees, donations, assistance }) => {
+    }).subscribe(({ beneficiaries, users, donations, assistance }) => {
       this.stats.totalBeneficiaries = beneficiaries.length;
       this.stats.activeBeneficiaries = beneficiaries.filter(b => b.isActive).length;
-      this.stats.totalEmployees = employees.length;
+      this.stats.totalUsers = users.length;
       this.stats.totalDonations = donations.length;
       this.stats.totalAssistance = assistance.length;
       this.stats.totalDonationsAmount = donations.reduce((sum, d) => sum + (d.amount || 0), 0);

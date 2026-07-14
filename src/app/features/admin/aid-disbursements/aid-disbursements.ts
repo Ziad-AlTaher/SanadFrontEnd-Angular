@@ -55,7 +55,6 @@ export class AidDisbursementsComponent implements OnInit {
     aidTypeId: [null, [Validators.required]],
     amount: [null, [Validators.required, Validators.min(0)]],
     disbursementDate: [null, [Validators.required]],
-    isActive: [true],
   });
 
   ngOnInit(): void {
@@ -82,7 +81,7 @@ export class AidDisbursementsComponent implements OnInit {
   openAddDialog(): void {
     this.isEditMode.set(false);
     this.selectedId.set(null);
-    this.form.reset({ isActive: true, disbursementDate: new Date().toISOString().split('T')[0] });
+    this.form.reset({ disbursementDate: new Date().toISOString().split('T')[0] });
     this.showDialog.set(true);
   }
 
@@ -125,13 +124,6 @@ export class AidDisbursementsComponent implements OnInit {
     }
   }
 
-  toggleStatus(item: ReadAidDisbursementDto): void {
-    this.service.toggleStatus(item.id!).subscribe(() => {
-      this.aidDisbursements.update(list => list.map(b => b.id === item.id ? { ...b, isActive: !b.isActive } : b));
-      this.messageService.add({ severity: 'info', summary: 'تم التحديث', detail: 'تم تغيير حالة عملية الصرف.' });
-    });
-  }
-
   confirmDelete(item: ReadAidDisbursementDto): void {
     this.confirmationService.confirm({
       message: `هل تريد حذف عملية صرف المساعدة لـ "${item.beneficiaryName}"؟`,
@@ -147,10 +139,6 @@ export class AidDisbursementsComponent implements OnInit {
         });
       },
     });
-  }
-
-  getStatusSeverity(isActive: boolean): 'success' | 'danger' {
-    return isActive ? 'success' : 'danger';
   }
 
   exportExcel(): void {

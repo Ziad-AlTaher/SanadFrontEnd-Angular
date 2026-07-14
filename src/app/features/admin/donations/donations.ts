@@ -52,7 +52,6 @@ export class DonationsComponent implements OnInit {
     amount:       [0,  [Validators.required, Validators.min(0)]],
     donationType: [1,  [Validators.required]],
     donationDate: [null, [Validators.required]],
-    isActive:     [true],
   });
 
   ngOnInit(): void {
@@ -73,7 +72,7 @@ export class DonationsComponent implements OnInit {
   openAddDialog(): void {
     this.isEditMode.set(false);
     this.selectedId.set(null);
-    this.form.reset({ donationType: 1, amount: 0, isActive: true, donationDate: new Date().toISOString().split('T')[0] });
+    this.form.reset({ donationType: 1, amount: 0, donationDate: new Date().toISOString().split('T')[0] });
     this.showDialog.set(true);
   }
 
@@ -109,13 +108,6 @@ export class DonationsComponent implements OnInit {
     }
   }
 
-  toggleStatus(item: ReadDonationDto): void {
-    this.service.toggleStatus(item.id!).subscribe(() => {
-      this.donations.update(list => list.map(b => b.id === item.id ? { ...b, isActive: !b.isActive } : b));
-      this.messageService.add({ severity: 'info', summary: 'تم التحديث', detail: 'تم تغيير حالة التبرع.' });
-    });
-  }
-
   confirmDelete(item: ReadDonationDto): void {
     this.confirmationService.confirm({
       message: `هل تريد حذف تبرع "${item.donorName}"؟`,
@@ -131,10 +123,6 @@ export class DonationsComponent implements OnInit {
         });
       },
     });
-  }
-
-  getStatusSeverity(isActive: boolean): 'success' | 'danger' {
-    return isActive ? 'success' : 'danger';
   }
 
   getDonationTypeLabel(type: DonationType): string {

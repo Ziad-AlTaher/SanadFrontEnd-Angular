@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '@env/environment';
 import { Result } from '../models/api-response.model';
-import { 
-    GetUserDto, 
-    ClientProfile, 
-    UpdateUserDto, 
-    AddUserDto 
+import {
+    GetUserDto,
+    ClientProfile,
+    UpdateUserDto,
+    AddUserDto
 } from '../models/user.model';
 import { BaseService } from '../base/base.service';
 
@@ -15,10 +15,10 @@ import { BaseService } from '../base/base.service';
     providedIn: 'root'
 })
 export class UserService extends BaseService<GetUserDto> {
-    
+
     constructor(http: HttpClient) {
         // Initializes base CRUD methods targeting api/UserService
-        super(http, 'UserService');
+        super(http, 'User');
     }
 
     updateUserStatus(id: number | string): Observable<Result<boolean>> {

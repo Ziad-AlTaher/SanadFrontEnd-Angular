@@ -36,7 +36,6 @@
           <th pSortableColumn="amount">{{ 'admin.cols.amount' | translate }} <p-sortIcon field="amount" /></th>
           <th pSortableColumn="donationType">{{ 'admin.cols.type' | translate }} <p-sortIcon field="donationType" /></th>
           <th pSortableColumn="donationDate">{{ 'admin.cols.date' | translate }} <p-sortIcon field="donationDate" /></th>
-          <th pSortableColumn="isActive">{{ 'admin.cols.status' | translate }}</th>
           <th>{{ 'admin.cols.actions' | translate }}</th>
         </tr>
       </ng-template>
@@ -51,16 +50,9 @@
           </td>
           <td class="text-muted">{{ item.donationDate | date:'yyyy-MM-dd' }}</td>
           <td>
-            <p-tag [value]="item.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
-              [severity]="getStatusSeverity(item.isActive)" />
-          </td>
-          <td>
             <div class="action-btns">
               <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" severity="info"
                 (onClick)="openEditDialog(item)" [pTooltip]="'common.edit' | translate" />
-              <p-button [icon]="item.isActive ? 'pi pi-ban' : 'pi pi-check-circle'" [rounded]="true" [text]="true"
-                [severity]="item.isActive ? 'warn' : 'success'" (onClick)="toggleStatus(item)"
-                [pTooltip]="item.isActive ? ('admin.deactivate' | translate) : ('admin.activate' | translate)" />
               <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
                 (onClick)="confirmDelete(item)" [pTooltip]="'common.delete' | translate" />
             </div>
@@ -70,7 +62,7 @@
 
       <ng-template #emptymessage>
         <tr>
-          <td colspan="6" class="text-center p-4">{{ 'admin.noData' | translate }}</td>
+          <td colspan="5" class="text-center p-4">{{ 'admin.noData' | translate }}</td>
         </tr>
       </ng-template>
     </p-table>

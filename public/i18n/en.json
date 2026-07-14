@@ -254,12 +254,14 @@
             "assistance": "Assistance",
             "donations": "Donations",
             "aidTypes": "Aid Types",
-            "aidDisbursements": "Aid Disbursements"
+            "aidDisbursements": "Aid Disbursements",
+            "users": "User Management"
         },
         "stats": {
             "beneficiaries": "Beneficiaries",
             "active": "Active",
             "employees": "Total Employees",
+            "users": "Total Users",
             "donations": "Total Donations (Count)",
             "donationsAmount": "Total Donations",
             "donationsCount": "Donation Process",

@@ -151,23 +151,6 @@ export class BeneficiariesComponent implements OnInit {
     });
   }
 
-  confirmDelete(item: ReadBeneficiaryDto): void {
-    this.confirmationService.confirm({
-      message: `هل تريد حذف "${item.fullName}"؟`,
-      header: 'تأكيد الحذف',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'حذف',
-      rejectLabel: 'إلغاء',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.service.delete(item.id!).subscribe(() => {
-          this.beneficiaries.update(list => list.filter(b => b.id !== item.id));
-          this.messageService.add({ severity: 'warn', summary: 'تم الحذف', detail: 'تم حذف المستحق.' });
-        });
-      },
-    });
-  }
-
   getStatusSeverity(isActive: boolean): 'success' | 'danger' {
     return isActive ? 'success' : 'danger';
   }

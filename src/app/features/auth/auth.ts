@@ -39,7 +39,6 @@ export class Auth extends BaseComponent implements OnInit {
     /** URL to redirect to after successful login (set by authGuard) */
     private returnUrl: string = '/';
 
-    activeTab = signal<'login' | 'register'>('login');
     submitted = signal(false);
 
     ngOnInit(): void {
@@ -53,24 +52,8 @@ export class Auth extends BaseComponent implements OnInit {
         password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
-    /** Register form (mapped to RegisterDto layout) */
-    registerForm: FormGroup = this.fb.group({
-        firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-        lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', [Validators.required, Validators.minLength(6)]]
-    });
-
     /** Shorthand for current form controls */
     get lf() { return this.loginForm.controls; }
-    get rf() { return this.registerForm.controls; }
-
-    switchTab(tab: 'login' | 'register'): void {
-        this.activeTab.set(tab);
-        this.submitted.set(false);
-        this.error = null;
-    }
 
     goToHome(): void {
         this.router.navigate(['/']);
@@ -107,64 +90,5 @@ export class Auth extends BaseComponent implements OnInit {
                     this.messageService.add({ severity: 'error', detail: 'Invalid email or password', life: 4000 });
                 }
             });
-    }
-
-    onRegister(): void {
-        this.submitted.set(true);
-
-        if (this.registerForm.invalid) {
-            Object.keys(this.rf).forEach(key => this.rf[key].markAsTouched());
-            return;
-        }
-
-        if (this.registerForm.value.password !== this.registerForm.value.confirmPassword) {
-            this.messageService.add({ severity: 'error', detail: 'Passwords do not match', life: 4000 });
-            return;
-        }
-
-        this.isLoading = true;
-        const req: RegisterDto = {
-            firstName: this.registerForm.value.firstName,
-            lastName: this.registerForm.value.lastName,
-            email: this.registerForm.value.email,
-            password: this.registerForm.value.password,
-            confirmPassword: this.registerForm.value.confirmPassword,
-            sendToEmail: true,
-            sendToSms: false
-        };
-
-        this.authService.register(req)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: (res) => {
-                    this.isLoading = false;
-                    if (res.status) {
-                        this.messageService.add({ severity: 'success', detail: 'Account created successfully!', life: 3000 });
-                        setTimeout(() => this.router.navigateByUrl(this.returnUrl), 800);
-                    } else {
-                        this.messageService.add({ severity: 'error', detail: res.message || 'Registration failed', life: 4000 });
-                    }
-                },
-                error: (err) => {
-                    this.isLoading = false;
-                    this.messageService.add({ severity: 'error', detail: 'Registration failed. Email might already exist.', life: 4000 });
-                }
-            });
-    }
-
-    loginWithGoogle(): void {
-        this.messageService.add({
-            severity: 'info',
-            detail: 'Google login coming soon!',
-            life: 3000
-        });
-    }
-
-    loginWithGitHub(): void {
-        this.messageService.add({
-            severity: 'info',
-            detail: 'GitHub login coming soon!',
-            life: 3000
-        });
     }
 }
