@@ -54,6 +54,18 @@
         <span class="label font-bold text-muted d-block">تاريخ الميلاد:</span>
         <span class="value text-dark">{{ beneficiary()?.birthDate | date:'yyyy-MM-dd' }}</span>
       </div>
+      <div class="detail-item">
+        <span class="label font-bold text-muted d-block">{{ 'admin.cols.maritalStatus' | translate }}:</span>
+        <span class="value text-dark">{{ getMaritalStatusLabel(beneficiary()?.maritalStatus) | translate }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label font-bold text-muted d-block">{{ 'admin.cols.healthStatus' | translate }}:</span>
+        <span class="value text-dark">{{ getHealthStatusLabel(beneficiary()?.healthStatus) | translate }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label font-bold text-muted d-block">{{ 'admin.cols.numberOfDependents' | translate }}:</span>
+        <span class="value text-dark">{{ beneficiary()?.numberOfDependents }}</span>
+      </div>
       <div class="detail-item full-width mt-2">
         <span class="label font-bold text-muted d-block">ملاحظات:</span>
         <span class="value text-dark">{{ beneficiary()?.notes || 'لا توجد ملاحظات.' }}</span>
@@ -69,22 +81,26 @@
       <ng-template #header>
         <tr>
           <th>نوع المساعدة</th>
+          <th>اسم المساعدة العينية</th>
           <th>القيمة</th>
           <th>تاريخ الصرف</th>
+          <th>ملاحظات</th>
         </tr>
       </ng-template>
 
       <ng-template #body let-item>
         <tr>
           <td class="font-semibold">{{ item.aidTypeName }}</td>
+          <td>{{ item.inKindName }}</td>
           <td>{{ item.amount | number }} ج.م</td>
           <td class="text-muted">{{ item.disbursementDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ item.notes }}</td>
         </tr>
       </ng-template>
 
       <ng-template #emptymessage>
         <tr>
-          <td colspan="3" class="text-center p-4">لا توجد عمليات صرف مساعدة مسجلة لهذا المستحق.</td>
+          <td colspan="5" class="text-center p-4">لا توجد عمليات صرف مساعدة مسجلة لهذا المستحق.</td>
         </tr>
       </ng-template>
     </p-table>

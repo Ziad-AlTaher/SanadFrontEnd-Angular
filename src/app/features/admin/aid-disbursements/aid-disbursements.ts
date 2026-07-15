@@ -55,6 +55,8 @@ export class AidDisbursementsComponent implements OnInit {
     aidTypeId: [null, [Validators.required]],
     amount: [null, [Validators.required, Validators.min(0)]],
     disbursementDate: [null, [Validators.required]],
+    inKindName: [''],
+    notes: [''],
   });
 
   ngOnInit(): void {
@@ -81,7 +83,7 @@ export class AidDisbursementsComponent implements OnInit {
   openAddDialog(): void {
     this.isEditMode.set(false);
     this.selectedId.set(null);
-    this.form.reset({ disbursementDate: new Date().toISOString().split('T')[0] });
+    this.form.reset({ disbursementDate: new Date().toISOString().split('T')[0], inKindName: '', notes: '' });
     this.showDialog.set(true);
   }
 

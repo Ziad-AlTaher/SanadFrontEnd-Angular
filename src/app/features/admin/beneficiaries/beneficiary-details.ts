@@ -9,7 +9,7 @@ import { MessageService } from 'primeng/api';
 import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { BeneficiaryService } from '../../../core/services/beneficiary.service';
 import { AidDisbursementService } from '../../../core/services/aid-disbursement.service';
-import { ReadBeneficiaryDto } from '../../../core/models/beneficiary.models';
+import { ReadBeneficiaryDto, MaritalStatus, HealthStatus } from '../../../core/models/beneficiary.models';
 import { ReadAidDisbursementDto } from '../../../core/models/aid-disbursement.models';
 
 @Component({
@@ -99,5 +99,28 @@ export class BeneficiaryDetailsComponent implements OnInit {
 
   getStatusSeverity(isActive?: boolean): 'success' | 'danger' {
     return isActive ? 'success' : 'danger';
+  }
+
+  getMaritalStatusLabel(status?: MaritalStatus): string {
+    if (status === undefined || status === null) return '';
+    switch (status) {
+      case MaritalStatus.Single: return 'admin.maritalStatus.single';
+      case MaritalStatus.Married: return 'admin.maritalStatus.married';
+      case MaritalStatus.Divorced: return 'admin.maritalStatus.divorced';
+      case MaritalStatus.Widowed: return 'admin.maritalStatus.widowed';
+      default: return '';
+    }
+  }
+
+  getHealthStatusLabel(status?: HealthStatus): string {
+    if (status === undefined || status === null) return '';
+    switch (status) {
+      case HealthStatus.Healthy: return 'admin.healthStatus.healthy';
+      case HealthStatus.KidneyDialysis: return 'admin.healthStatus.kidneyDialysis';
+      case HealthStatus.BurnInjury: return 'admin.healthStatus.burnInjury';
+      case HealthStatus.Amputation: return 'admin.healthStatus.amputation';
+      case HealthStatus.ChronicIllness: return 'admin.healthStatus.chronicIllness';
+      default: return '';
+    }
   }
 }

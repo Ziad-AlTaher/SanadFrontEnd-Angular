@@ -239,6 +239,19 @@
     },
     "admin": {
         "title": "Admin Dashboard",
+        "maritalStatus": {
+            "single": "Single",
+            "married": "Married",
+            "divorced": "Divorced",
+            "widowed": "Widowed"
+        },
+        "healthStatus": {
+            "healthy": "Healthy",
+            "kidneyDialysis": "Kidney Dialysis",
+            "burnInjury": "Burn Injury",
+            "amputation": "Amputation",
+            "chronicIllness": "Chronic Illness"
+        },
         "search": "Search...",
         "noData": "No data available.",
         "activate": "Activate",
@@ -330,7 +343,11 @@
             "donorName": "Donor Name",
             "defaultValue": "Default Value",
             "birthDate": "Birth Date",
-            "notes": "Notes"
+            "notes": "Notes",
+            "maritalStatus": "Marital Status",
+            "healthStatus": "Health Status",
+            "numberOfDependents": "Number of Dependents",
+            "inKindName": "In-Kind Item Name"
         }
     }
 }

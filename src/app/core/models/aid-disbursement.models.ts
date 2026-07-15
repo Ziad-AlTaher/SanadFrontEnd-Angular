@@ -5,6 +5,8 @@ export interface AidDisbursementDto {
   amount?: number;
   disbursementDate?: string;
   isActive?: boolean;
+  inKindName?: string;
+  notes?: string;
 }
 
 export interface ReadAidDisbursementDto extends AidDisbursementDto {

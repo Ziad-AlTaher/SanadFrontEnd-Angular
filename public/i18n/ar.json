@@ -239,6 +239,19 @@
     },
     "admin": {
         "title": "لوحة الإدارة",
+        "maritalStatus": {
+            "single": "أعزب / عزباء",
+            "married": "متزوج / متزوجة",
+            "divorced": "مطلق / مطلقة",
+            "widowed": "أرمل / أرملة"
+        },
+        "healthStatus": {
+            "healthy": "معافى",
+            "kidneyDialysis": "غسيل كلوي",
+            "burnInjury": "حريق",
+            "amputation": "بتر",
+            "chronicIllness": "مرض مزمن"
+        },
         "search": "بحث...",
         "noData": "لا توجد بيانات متاحة.",
         "activate": "تنشيط",
@@ -330,7 +343,11 @@
             "donorName": "اسم المتبرع",
             "defaultValue": "القيمة الافتراضية",
             "birthDate": "تاريخ الميلاد",
-            "notes": "ملاحظات"
+            "notes": "ملاحظات",
+            "maritalStatus": "الحالة الاجتماعية",
+            "healthStatus": "الحالة الصحية",
+            "numberOfDependents": "عدد المعالين",
+            "inKindName": "اسم المساعدة العينية"
         }
     }
 }

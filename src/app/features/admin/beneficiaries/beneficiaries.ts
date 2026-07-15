@@ -16,7 +16,7 @@ import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { BeneficiaryService } from '../../../core/services/beneficiary.service';
 import { AttachmentService } from '../../../core/services/attachment.service';
 import { AidDisbursementService } from '../../../core/services/aid-disbursement.service';
-import { ReadBeneficiaryDto } from '../../../core/models/beneficiary.models';
+import { ReadBeneficiaryDto, MaritalStatus, HealthStatus } from '../../../core/models/beneficiary.models';
 import { ReadAttachmentDto, FileType } from '../../../core/models/attachment.models';
 import { ReadAidDisbursementDto } from '../../../core/models/aid-disbursement.models';
 import { environment } from '@env/environment';
@@ -39,6 +39,7 @@ import { RouterModule } from '@angular/router';
 })
 export class BeneficiariesComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('excelImportInput') excelImportInput!: ElementRef<HTMLInputElement>;
 
   private service = inject(BeneficiaryService);
   private attachmentService = inject(AttachmentService);
@@ -77,6 +78,21 @@ export class BeneficiariesComponent implements OnInit {
     { label: 'آخر (Other)', value: 5 }
   ];
 
+  maritalStatuses = [
+    { label: 'admin.maritalStatus.single', value: MaritalStatus.Single },
+    { label: 'admin.maritalStatus.married', value: MaritalStatus.Married },
+    { label: 'admin.maritalStatus.divorced', value: MaritalStatus.Divorced },
+    { label: 'admin.maritalStatus.widowed', value: MaritalStatus.Widowed }
+  ];
+
+  healthStatuses = [
+    { label: 'admin.healthStatus.healthy', value: HealthStatus.Healthy },
+    { label: 'admin.healthStatus.kidneyDialysis', value: HealthStatus.KidneyDialysis },
+    { label: 'admin.healthStatus.burnInjury', value: HealthStatus.BurnInjury },
+    { label: 'admin.healthStatus.amputation', value: HealthStatus.Amputation },
+    { label: 'admin.healthStatus.chronicIllness', value: HealthStatus.ChronicIllness }
+  ];
+
   form: FormGroup = this.fb.group({
     fullName: ['', [Validators.required]],
     nationalId: ['', [Validators.required]],
@@ -85,6 +101,9 @@ export class BeneficiariesComponent implements OnInit {
     notes: [''],
     birthDate: [null, [Validators.required]],
     isActive: [true],
+    maritalStatus: [MaritalStatus.Single, [Validators.required]],
+    healthStatus: [HealthStatus.Healthy, [Validators.required]],
+    numberOfDependents: [0, [Validators.required, Validators.min(0)]],
   });
 
   attachmentForm: FormGroup = this.fb.group({
@@ -108,8 +127,31 @@ export class BeneficiariesComponent implements OnInit {
   openAddDialog(): void {
     this.isEditMode.set(false);
     this.selectedId.set(null);
-    this.form.reset({ isActive: true });
+    this.form.reset({ isActive: true, maritalStatus: MaritalStatus.Single, healthStatus: HealthStatus.Healthy, numberOfDependents: 0 });
     this.showDialog.set(true);
+  }
+
+  getMaritalStatusLabel(status?: MaritalStatus): string {
+    if (status === undefined || status === null) return '';
+    switch (status) {
+      case MaritalStatus.Single: return 'admin.maritalStatus.single';
+      case MaritalStatus.Married: return 'admin.maritalStatus.married';
+      case MaritalStatus.Divorced: return 'admin.maritalStatus.divorced';
+      case MaritalStatus.Widowed: return 'admin.maritalStatus.widowed';
+      default: return '';
+    }
+  }
+
+  getHealthStatusLabel(status?: HealthStatus): string {
+    if (status === undefined || status === null) return '';
+    switch (status) {
+      case HealthStatus.Healthy: return 'admin.healthStatus.healthy';
+      case HealthStatus.KidneyDialysis: return 'admin.healthStatus.kidneyDialysis';
+      case HealthStatus.BurnInjury: return 'admin.healthStatus.burnInjury';
+      case HealthStatus.Amputation: return 'admin.healthStatus.amputation';
+      case HealthStatus.ChronicIllness: return 'admin.healthStatus.chronicIllness';
+      default: return '';
+    }
   }
 
   openEditDialog(item: ReadBeneficiaryDto): void {
@@ -361,14 +403,56 @@ export class BeneficiariesComponent implements OnInit {
   }
 
   exportExcel(): void {
-    this.service.exportExcel().subscribe({
+    this.service.exportBeneficiariesToExcel().subscribe({
       next: (blob) => {
         const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         const url = window.URL.createObjectURL(file);
-        window.open(url, '_blank');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Beneficiaries.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
       },
       error: () => this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تصدير ملف Excel.' })
     });
+  }
+
+  downloadTemplate(): void {
+    this.service.exportEmptyTemplate().subscribe({
+      next: (blob) => {
+        const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'BeneficiariesTemplate.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل تحميل قالب Excel.' })
+    });
+  }
+
+  triggerImportExcel(): void {
+    this.excelImportInput.nativeElement.click();
+  }
+
+  onExcelImportSelected(event: any): void {
+    const file = event.target.files?.[0];
+    if (file) {
+      this.isLoading.set(true);
+      this.service.importFromExcel(file).subscribe({
+        next: () => {
+          this.loadData();
+          this.messageService.add({ severity: 'success', summary: 'تم الاستيراد', detail: 'تم استيراد المستحقين من ملف Excel بنجاح.' });
+          this.excelImportInput.nativeElement.value = '';
+        },
+        error: () => {
+          this.isLoading.set(false);
+          this.messageService.add({ severity: 'error', summary: 'خطأ', detail: 'فشل استيراد ملف Excel.' });
+          this.excelImportInput.nativeElement.value = '';
+        }
+      });
+    }
   }
 
   exportPdf(): void {

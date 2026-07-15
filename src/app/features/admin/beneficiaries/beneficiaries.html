@@ -9,9 +9,13 @@
       <p class="page-subtitle">{{ 'admin.beneficiaries.subtitle' | translate }}</p>
     </div>
     <div class="action-btns">
+      <p-button label="تحميل قالب Excel" icon="pi pi-download" severity="info" (onClick)="downloadTemplate()" />
+      <p-button label="استيراد Excel" icon="pi pi-upload" severity="help" (onClick)="triggerImportExcel()" />
       <p-button label="Excel" icon="pi pi-file-excel" severity="success" (onClick)="exportExcel()" />
       <p-button label="PDF" icon="pi pi-file-pdf" severity="danger" (onClick)="exportPdf()" />
       <p-button [label]="'common.add' | translate" icon="pi pi-plus" (onClick)="openAddDialog()" />
+      <input type="file" #excelImportInput style="display: none" (change)="onExcelImportSelected($event)"
+        accept=".xlsx, .xls" />
     </div>
   </div>
 
@@ -38,6 +42,9 @@
           <th pSortableColumn="phoneNumber">{{ 'admin.cols.phone' | translate }}</th>
           <th>{{ 'admin.cols.address' | translate }}</th>
           <th>{{ 'admin.cols.birthDate' | translate }}</th>
+          <th>{{ 'admin.cols.maritalStatus' | translate }}</th>
+          <th>{{ 'admin.cols.healthStatus' | translate }}</th>
+          <th>{{ 'admin.cols.numberOfDependents' | translate }}</th>
           <th>{{ 'admin.cols.notes' | translate }}</th>
           <th pSortableColumn="isActive">{{ 'admin.cols.status' | translate }}</th>
           <th>{{ 'admin.cols.actions' | translate }}</th>
@@ -51,6 +58,9 @@
           <td>{{ item.phoneNumber }}</td>
           <td>{{ item.address }}</td>
           <td>{{ item.birthDate | date:'yyyy-MM-dd' }}</td>
+          <td>{{ getMaritalStatusLabel(item.maritalStatus) | translate }}</td>
+          <td>{{ getHealthStatusLabel(item.healthStatus) | translate }}</td>
+          <td>{{ item.numberOfDependents }}</td>
           <td>{{ item.notes }}</td>
           <td>
             <p-tag [value]="item.isActive ? ('admin.status.active' | translate) : ('admin.status.inactive' | translate)"
@@ -82,7 +92,7 @@
 
       <ng-template #emptymessage>
         <tr>
-          <td colspan="8" class="text-center p-4">{{ 'admin.noData' | translate }}</td>
+          <td colspan="11" class="text-center p-4">{{ 'admin.noData' | translate }}</td>
         </tr>
       </ng-template>
     </p-table>
@@ -135,6 +145,49 @@
         <small class="form-error">{{ 'validation.required' | translate }}</small>
         }
       </div>
+      <div class="form-group">
+        <label>{{ 'admin.cols.maritalStatus' | translate }}</label>
+        <p-select formControlName="maritalStatus" [options]="maritalStatuses" optionLabel="label" optionValue="value"
+          styleClass="w-full" appendTo="body">
+          <ng-template #selectedItem let-selectedOption>
+            <span>{{ selectedOption.label | translate }}</span>
+          </ng-template>
+          <ng-template #item let-option>
+            <span>{{ option.label | translate }}</span>
+          </ng-template>
+        </p-select>
+        @if (form.get('maritalStatus')?.invalid && form.get('maritalStatus')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>{{ 'admin.cols.healthStatus' | translate }}</label>
+        <p-select formControlName="healthStatus" [options]="healthStatuses" optionLabel="label" optionValue="value"
+          styleClass="w-full" appendTo="body">
+          <ng-template #selectedItem let-selectedOption>
+            <span>{{ selectedOption.label | translate }}</span>
+          </ng-template>
+          <ng-template #item let-option>
+            <span>{{ option.label | translate }}</span>
+          </ng-template>
+        </p-select>
+        @if (form.get('healthStatus')?.invalid && form.get('healthStatus')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+      <div class="form-group">
+        <label>{{ 'admin.cols.numberOfDependents' | translate }}</label>
+        <p-inputnumber formControlName="numberOfDependents" [min]="0" styleClass="w-full" />
+        @if (form.get('numberOfDependents')?.invalid && form.get('numberOfDependents')?.touched) {
+        <small class="form-error">{{ 'validation.required' | translate }}</small>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
       <div class="form-group">
         <label>ملاحظات</label>
         <input pInputText formControlName="notes" />
@@ -246,22 +299,26 @@
     <ng-template #header>
       <tr>
         <th>نوع المساعدة</th>
+        <th>اسم المساعدة العينية</th>
         <th>القيمة</th>
         <th>تاريخ الصرف</th>
+        <th>ملاحظات</th>
       </tr>
     </ng-template>
 
     <ng-template #body let-item>
       <tr>
         <td class="font-semibold">{{ item.aidTypeName }}</td>
+        <td>{{ item.inKindName }}</td>
         <td>{{ item.amount | number }} ج.م</td>
         <td class="text-muted">{{ item.disbursementDate | date:'yyyy-MM-dd' }}</td>
+        <td>{{ item.notes }}</td>
       </tr>
     </ng-template>
 
     <ng-template #emptymessage>
       <tr>
-        <td colspan="3" class="text-center p-4">لا توجد عمليات صرف مساعدة مسجلة لهذا المستحق.</td>
+        <td colspan="5" class="text-center p-4">لا توجد عمليات صرف مساعدة مسجلة لهذا المستحق.</td>
       </tr>
     </ng-template>
   </p-table>
