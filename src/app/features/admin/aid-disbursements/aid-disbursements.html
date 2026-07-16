@@ -90,7 +90,8 @@
       <div class="form-group">
         <label>{{ 'admin.cols.aidTypeName' | translate }}</label>
         <p-select formControlName="aidTypeId" [options]="aidTypes()" optionLabel="name" optionValue="id" [filter]="true"
-          filterBy="name" placeholder="اختر نوع المساعدة" styleClass="w-full" appendTo="body" />
+          filterBy="name" placeholder="اختر نوع المساعدة" styleClass="w-full" appendTo="body"
+          (onChange)="onAidTypeChange($event.value)" />
         @if (form.get('aidTypeId')?.invalid && form.get('aidTypeId')?.touched) {
         <small class="form-error">{{ 'validation.required' | translate }}</small>
         }

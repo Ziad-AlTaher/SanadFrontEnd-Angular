@@ -48,9 +48,9 @@ export class DonationsComponent implements OnInit {
   ];
 
   form: FormGroup = this.fb.group({
-    donorName:    ['', [Validators.required]],
-    amount:       [0,  [Validators.required, Validators.min(0)]],
-    donationType: [1,  [Validators.required]],
+    donorName: ['', [Validators.required]],
+    amount: [0, [Validators.required, Validators.min(0)]],
+    donationType: [1, [Validators.required]],
     donationDate: [null, [Validators.required]],
   });
 

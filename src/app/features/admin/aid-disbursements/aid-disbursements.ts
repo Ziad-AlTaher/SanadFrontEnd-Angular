@@ -83,8 +83,24 @@ export class AidDisbursementsComponent implements OnInit {
   openAddDialog(): void {
     this.isEditMode.set(false);
     this.selectedId.set(null);
-    this.form.reset({ disbursementDate: new Date().toISOString().split('T')[0], inKindName: '', notes: '' });
+    const currentAidTypeId = this.form.get('aidTypeId')?.value;
+    const currentAmount = this.form.get('amount')?.value;
+    const currentinKindName = this.form.get('inKindName')?.value;
+    this.form.reset({
+      disbursementDate: new Date().toISOString().split('T')[0],
+      inKindName: currentinKindName,
+      notes: '',
+      aidTypeId: currentAidTypeId,
+      amount: currentAmount
+    });
     this.showDialog.set(true);
+  }
+
+  onAidTypeChange(aidTypeId: string): void {
+    const selectedType = this.aidTypes().find(t => t.id === aidTypeId);
+    if (selectedType && selectedType.defaultValue !== undefined && selectedType.defaultValue !== null) {
+      this.form.get('amount')?.setValue(selectedType.defaultValue);
+    }
   }
 
   openEditDialog(item: ReadAidDisbursementDto): void {
