@@ -128,5 +128,16 @@
         "createError": "فشل في إضافة الكتاب.",
         "updateSuccess": "تم تحديث الكتاب بنجاح!",
         "updateError": "فشل في تحديث الكتاب."
+    },
+    "admin": {
+        "beneficiaryType": {
+            "none": "لا يوجد",
+            "monthly": "شهري",
+            "chronicIllness": "مرض مزمن",
+            "exceptional": "استثنائي"
+        },
+        "cols": {
+            "beneficiaryType": "نوع المستفيد"
+        }
     }
 }

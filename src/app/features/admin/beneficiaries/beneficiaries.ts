@@ -16,7 +16,8 @@ import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { BeneficiaryService } from '../../../core/services/beneficiary.service';
 import { AttachmentService } from '../../../core/services/attachment.service';
 import { AidDisbursementService } from '../../../core/services/aid-disbursement.service';
-import { ReadBeneficiaryDto, MaritalStatus, HealthStatus } from '../../../core/models/beneficiary.models';
+import { TranslationService } from '../../../core/services/translation.service';
+import { ReadBeneficiaryDto, MaritalStatus, HealthStatus, BeneficiaryType } from '../../../core/models/beneficiary.models';
 import { ReadAttachmentDto, FileType } from '../../../core/models/attachment.models';
 import { ReadAidDisbursementDto } from '../../../core/models/aid-disbursement.models';
 import { environment } from '@env/environment';
@@ -47,6 +48,9 @@ export class BeneficiariesComponent implements OnInit {
   private fb = inject(FormBuilder);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  private translationService = inject(TranslationService);
+
+  BeneficiaryType = BeneficiaryType;
 
   beneficiaries = signal<ReadBeneficiaryDto[]>([]);
   showDialog = signal(false);
@@ -104,6 +108,7 @@ export class BeneficiariesComponent implements OnInit {
     maritalStatus: [MaritalStatus.Single, [Validators.required]],
     healthStatus: [HealthStatus.Healthy, [Validators.required]],
     numberOfDependents: [0, [Validators.required, Validators.min(0)]],
+    beneficiaryType: [0]
   });
 
   attachmentForm: FormGroup = this.fb.group({
@@ -127,7 +132,7 @@ export class BeneficiariesComponent implements OnInit {
   openAddDialog(): void {
     this.isEditMode.set(false);
     this.selectedId.set(null);
-    this.form.reset({ isActive: true, maritalStatus: MaritalStatus.Single, healthStatus: HealthStatus.Healthy, numberOfDependents: 0 });
+    this.form.reset({ isActive: true, maritalStatus: MaritalStatus.Single, healthStatus: HealthStatus.Healthy, numberOfDependents: 0, beneficiaryType: 0 });
     this.showDialog.set(true);
   }
 
@@ -152,6 +157,39 @@ export class BeneficiariesComponent implements OnInit {
       case HealthStatus.ChronicIllness: return 'admin.healthStatus.chronicIllness';
       default: return '';
     }
+  }
+
+  getBeneficiaryTypeLabel(type?: BeneficiaryType): string {
+    if (type === undefined || type === null || type === 0) {
+      return this.translationService.translate('admin.beneficiaryType.none');
+    }
+    const labels: string[] = [];
+    if ((type & BeneficiaryType.Monthly) === BeneficiaryType.Monthly) {
+      labels.push(this.translationService.translate('admin.beneficiaryType.monthly'));
+    }
+    if ((type & BeneficiaryType.ChronicIllness) === BeneficiaryType.ChronicIllness) {
+      labels.push(this.translationService.translate('admin.beneficiaryType.chronicIllness'));
+    }
+    if ((type & BeneficiaryType.Exceptional) === BeneficiaryType.Exceptional) {
+      labels.push(this.translationService.translate('admin.beneficiaryType.exceptional'));
+    }
+    return labels.join(', ');
+  }
+
+  isTypeChecked(type: BeneficiaryType): boolean {
+    const currentValue = this.form.get('beneficiaryType')?.value || 0;
+    return (currentValue & type) === type;
+  }
+
+  onTypeCheckboxChange(type: BeneficiaryType, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    let currentValue = this.form.get('beneficiaryType')?.value || 0;
+    if (checked) {
+      currentValue |= type;
+    } else {
+      currentValue &= ~type;
+    }
+    this.form.get('beneficiaryType')?.setValue(currentValue);
   }
 
   openEditDialog(item: ReadBeneficiaryDto): void {

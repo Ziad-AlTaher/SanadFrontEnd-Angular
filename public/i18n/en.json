@@ -252,6 +252,12 @@
             "amputation": "Amputation",
             "chronicIllness": "Chronic Illness"
         },
+        "beneficiaryType": {
+            "none": "None",
+            "monthly": "Monthly",
+            "chronicIllness": "Chronic Illness",
+            "exceptional": "Exceptional"
+        },
         "search": "Search...",
         "noData": "No data available.",
         "activate": "Activate",
@@ -347,6 +353,7 @@
             "maritalStatus": "Marital Status",
             "healthStatus": "Health Status",
             "numberOfDependents": "Number of Dependents",
+            "beneficiaryType": "Beneficiary Type",
             "inKindName": "In-Kind Item Name"
         }
     }

@@ -252,6 +252,12 @@
             "amputation": "بتر",
             "chronicIllness": "مرض مزمن"
         },
+        "beneficiaryType": {
+            "none": "لا يوجد",
+            "monthly": "شهري",
+            "chronicIllness": "مرض مزمن",
+            "exceptional": "استثنائي"
+        },
         "search": "بحث...",
         "noData": "لا توجد بيانات متاحة.",
         "activate": "تنشيط",
@@ -347,6 +353,7 @@
             "maritalStatus": "الحالة الاجتماعية",
             "healthStatus": "الحالة الصحية",
             "numberOfDependents": "عدد المعالين",
+            "beneficiaryType": "نوع المستفيد",
             "inKindName": "اسم المساعدة العينية"
         }
     }

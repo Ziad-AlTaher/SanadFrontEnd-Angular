@@ -9,7 +9,8 @@ import { MessageService } from 'primeng/api';
 import { TranslatePipe } from '../../../core/pipes/translate.pipe';
 import { BeneficiaryService } from '../../../core/services/beneficiary.service';
 import { AidDisbursementService } from '../../../core/services/aid-disbursement.service';
-import { ReadBeneficiaryDto, MaritalStatus, HealthStatus } from '../../../core/models/beneficiary.models';
+import { TranslationService } from '../../../core/services/translation.service';
+import { ReadBeneficiaryDto, MaritalStatus, HealthStatus, BeneficiaryType } from '../../../core/models/beneficiary.models';
 import { ReadAidDisbursementDto } from '../../../core/models/aid-disbursement.models';
 
 @Component({
@@ -35,6 +36,7 @@ export class BeneficiaryDetailsComponent implements OnInit {
   private service = inject(BeneficiaryService);
   private aidDisbursementService = inject(AidDisbursementService);
   private messageService = inject(MessageService);
+  private translationService = inject(TranslationService);
 
   beneficiary = signal<ReadBeneficiaryDto | null>(null);
   aidDisbursements = signal<ReadAidDisbursementDto[]>([]);
@@ -122,5 +124,22 @@ export class BeneficiaryDetailsComponent implements OnInit {
       case HealthStatus.ChronicIllness: return 'admin.healthStatus.chronicIllness';
       default: return '';
     }
+  }
+
+  getBeneficiaryTypeLabel(type?: BeneficiaryType): string {
+    if (type === undefined || type === null || type === 0) {
+      return this.translationService.translate('admin.beneficiaryType.none');
+    }
+    const labels: string[] = [];
+    if ((type & BeneficiaryType.Monthly) === BeneficiaryType.Monthly) {
+      labels.push(this.translationService.translate('admin.beneficiaryType.monthly'));
+    }
+    if ((type & BeneficiaryType.ChronicIllness) === BeneficiaryType.ChronicIllness) {
+      labels.push(this.translationService.translate('admin.beneficiaryType.chronicIllness'));
+    }
+    if ((type & BeneficiaryType.Exceptional) === BeneficiaryType.Exceptional) {
+      labels.push(this.translationService.translate('admin.beneficiaryType.exceptional'));
+    }
+    return labels.join(', ');
   }
 }

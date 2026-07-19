@@ -13,6 +13,13 @@ export enum HealthStatus {
   ChronicIllness = 4
 }
 
+export enum BeneficiaryType {
+  None = 0,
+  Monthly = 1,
+  ChronicIllness = 2,
+  Exceptional = 4
+}
+
 export interface BeneficiaryDto {
   id?: string;
   fullName?: string;
@@ -25,6 +32,7 @@ export interface BeneficiaryDto {
   maritalStatus?: MaritalStatus;
   healthStatus?: HealthStatus;
   numberOfDependents?: number;
+  beneficiaryType?: BeneficiaryType;
 }
 
 export interface ReadBeneficiaryDto extends BeneficiaryDto {
@@ -37,3 +45,4 @@ export interface WriteBeneficiaryDto extends BeneficiaryDto {
 
 export interface UpdateBeneficiaryDto extends BeneficiaryDto {
 }
+

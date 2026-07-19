@@ -66,6 +66,10 @@
         <span class="label font-bold text-muted d-block">{{ 'admin.cols.numberOfDependents' | translate }}:</span>
         <span class="value text-dark">{{ beneficiary()?.numberOfDependents }}</span>
       </div>
+      <div class="detail-item">
+        <span class="label font-bold text-muted d-block">{{ 'admin.cols.beneficiaryType' | translate }}:</span>
+        <span class="value text-dark">{{ getBeneficiaryTypeLabel(beneficiary()?.beneficiaryType) }}</span>
+      </div>
       <div class="detail-item full-width mt-2">
         <span class="label font-bold text-muted d-block">ملاحظات:</span>
         <span class="value text-dark">{{ beneficiary()?.notes || 'لا توجد ملاحظات.' }}</span>

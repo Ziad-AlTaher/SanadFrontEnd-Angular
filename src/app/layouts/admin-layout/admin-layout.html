@@ -16,7 +16,7 @@
     <nav class="sidebar-nav">
       @for (item of navItems; track item.route) {
       <a [routerLink]="item.route" routerLinkActive="nav-item-active" class="nav-item"
-        [title]="item.labelKey | translate">
+        [title]="item.labelKey | translate" (click)="sidebarCollapsed.set(true)">
         <i [class]="item.icon" class="nav-icon"></i>
         @if (!sidebarCollapsed()) {
         <span class="nav-label">{{ item.labelKey | translate }}</span>

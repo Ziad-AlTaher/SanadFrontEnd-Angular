@@ -128,5 +128,16 @@
         "createError": "Failed to create book.",
         "updateSuccess": "Book updated successfully!",
         "updateError": "Failed to update book."
+    },
+    "admin": {
+        "beneficiaryType": {
+            "none": "None",
+            "monthly": "Monthly",
+            "chronicIllness": "Chronic Illness",
+            "exceptional": "Exceptional"
+        },
+        "cols": {
+            "beneficiaryType": "Beneficiary Type"
+        }
     }
 }
