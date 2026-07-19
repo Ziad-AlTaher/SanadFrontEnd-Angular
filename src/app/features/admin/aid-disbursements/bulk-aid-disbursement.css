@@ -1,0 +1,277 @@
+/* Shared styles for all admin CRUD pages */
+@import '../../../shared/admin-crud.css';
+
+/* =============================================
+   Bulk Aid Disbursement - Specific Styles
+   ============================================= */
+
+/* Filter Card */
+.filter-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.filter-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark, #1a4fa0) 100%);
+  color: #fff;
+  font-weight: 600;
+  font-size: var(--font-md);
+}
+
+.filter-card-header .pi {
+  font-size: 1.1rem;
+}
+
+.filter-body {
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* Beneficiary Type Section */
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.filter-label {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.type-checkboxes {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+/* Type Chip */
+.type-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-xl);
+  cursor: pointer;
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary, #f8fafc);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.type-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb, 59, 130, 246), 0.06);
+}
+
+.type-chip-active {
+  border-color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb, 59, 130, 246), 0.1);
+  color: var(--color-primary);
+}
+
+.type-chip .pi {
+  font-size: 0.9rem;
+}
+
+/* Filter Grid */
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
+}
+
+@media (max-width: 1100px) {
+  .filter-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .filter-grid { grid-template-columns: 1fr; }
+  .type-checkboxes { flex-direction: column; }
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.filter-date-input {
+  height: 2.5rem;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--radius-md);
+  padding: 0 var(--spacing-sm);
+  font-size: var(--font-sm);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-date-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb, 59, 130, 246), 0.15);
+}
+
+/* Prepare Button */
+.prepare-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+:host ::ng-deep .prepare-btn {
+  padding-inline: var(--spacing-xl);
+  font-weight: 600;
+  font-size: var(--font-md);
+}
+
+/* Preview Table Card */
+.preview-table-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.preview-header-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.preview-header-info .pi {
+  color: var(--color-primary);
+}
+
+.preview-badge {
+  background: var(--color-primary);
+  color: #fff;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.preview-badge-warn {
+  background: var(--color-warning, #f59e0b);
+}
+
+/* Bulk Table */
+:host ::ng-deep .bulk-table .col-check {
+  width: 3rem;
+  text-align: center;
+}
+
+:host ::ng-deep .bulk-table .col-amount {
+  width: 10rem;
+}
+
+:host ::ng-deep .bulk-table .amount-input {
+  width: 100%;
+}
+
+/* Unchecked row styling */
+:host ::ng-deep .bulk-table tr.row-unchecked td {
+  opacity: 0.4;
+}
+
+:host ::ng-deep .bulk-table tr.row-unchecked {
+  background: transparent !important;
+}
+
+.beneficiary-name {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.beneficiary-name.strikethrough {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.name-icon {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.type-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  background: rgba(var(--color-primary-rgb, 59, 130, 246), 0.1);
+  color: var(--color-primary);
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  opacity: 0.3;
+}
+
+/* Save Bar */
+.save-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-secondary, #f8fafc);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+}
+
+.save-bar-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.save-bar-count {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: var(--font-sm);
+}
+
+.save-bar-count .pi {
+  font-size: 1rem;
+}

@@ -138,6 +138,17 @@
         },
         "cols": {
             "beneficiaryType": "Beneficiary Type"
+        },
+        "nav": {
+            "bulkDisbursements": "Bulk Disbursement"
+        },
+        "bulkDisbursements": {
+            "title": "Bulk Aid Disbursement",
+            "subtitle": "Select beneficiary types and aid type to prepare a bulk disbursement list",
+            "prepare": "Prepare List",
+            "saveAll": "Save All",
+            "noBeneficiaries": "No beneficiaries found for the selected type.",
+            "ready": "Ready"
         }
     }
 }

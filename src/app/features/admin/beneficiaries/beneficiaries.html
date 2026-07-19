@@ -22,9 +22,8 @@
   <!-- Table -->
   <div class="table-card">
     <p-table [value]="beneficiaries()" [loading]="isLoading()" [paginator]="true" [rows]="10"
-      [rowsPerPageOptions]="[5, 10, 25]"
-      [globalFilterFields]="['fullName', 'nationalId', 'phoneNumber', 'address', 'notes']" dataKey="id"
-      styleClass="p-datatable-striped p-datatable-sm" #dt>
+      [rowsPerPageOptions]="[5, 10, 25,100,1000,100000]" [lazy]="true" [totalRecords]="totalRecords()"
+      (onLazyLoad)="loadBeneficiariesLazy($event)" dataKey="id" styleClass="p-datatable-striped p-datatable-sm" #dt>
       <ng-template #caption>
         <div class="table-caption">
           <span class="p-input-icon-start">
@@ -47,7 +46,7 @@
           <th>{{ 'admin.cols.actions' | translate }}</th>
         </tr>
       </ng-template>
- 
+
       <ng-template #body let-item>
         <tr>
           <td class="font-semibold">{{ item.fullName }}</td>
@@ -83,7 +82,7 @@
           </td>
         </tr>
       </ng-template>
- 
+
       <ng-template #emptymessage>
         <tr>
           <td colspan="8" class="text-center p-4">{{ 'admin.noData' | translate }}</td>
@@ -186,16 +185,24 @@
         <label>{{ 'admin.cols.beneficiaryType' | translate }}</label>
         <div style="display: flex; gap: 1.5rem; align-items: center; margin-top: 0.5rem; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <input type="checkbox" id="typeMonthly" [checked]="isTypeChecked(BeneficiaryType.Monthly)" (change)="onTypeCheckboxChange(BeneficiaryType.Monthly, $event)" style="width: auto; cursor: pointer;" />
-            <label for="typeMonthly" style="cursor: pointer; margin: 0;">{{ 'admin.beneficiaryType.monthly' | translate }}</label>
+            <input type="checkbox" id="typeMonthly" [checked]="isTypeChecked(BeneficiaryType.Monthly)"
+              (change)="onTypeCheckboxChange(BeneficiaryType.Monthly, $event)" style="width: auto; cursor: pointer;" />
+            <label for="typeMonthly" style="cursor: pointer; margin: 0;">{{ 'admin.beneficiaryType.monthly' | translate
+              }}</label>
           </div>
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <input type="checkbox" id="typeChronic" [checked]="isTypeChecked(BeneficiaryType.ChronicIllness)" (change)="onTypeCheckboxChange(BeneficiaryType.ChronicIllness, $event)" style="width: auto; cursor: pointer;" />
-            <label for="typeChronic" style="cursor: pointer; margin: 0;">{{ 'admin.beneficiaryType.chronicIllness' | translate }}</label>
+            <input type="checkbox" id="typeChronic" [checked]="isTypeChecked(BeneficiaryType.ChronicIllness)"
+              (change)="onTypeCheckboxChange(BeneficiaryType.ChronicIllness, $event)"
+              style="width: auto; cursor: pointer;" />
+            <label for="typeChronic" style="cursor: pointer; margin: 0;">{{ 'admin.beneficiaryType.chronicIllness' |
+              translate }}</label>
           </div>
           <div style="display: flex; align-items: center; gap: 0.5rem;">
-            <input type="checkbox" id="typeExceptional" [checked]="isTypeChecked(BeneficiaryType.Exceptional)" (change)="onTypeCheckboxChange(BeneficiaryType.Exceptional, $event)" style="width: auto; cursor: pointer;" />
-            <label for="typeExceptional" style="cursor: pointer; margin: 0;">{{ 'admin.beneficiaryType.exceptional' | translate }}</label>
+            <input type="checkbox" id="typeExceptional" [checked]="isTypeChecked(BeneficiaryType.Exceptional)"
+              (change)="onTypeCheckboxChange(BeneficiaryType.Exceptional, $event)"
+              style="width: auto; cursor: pointer;" />
+            <label for="typeExceptional" style="cursor: pointer; margin: 0;">{{ 'admin.beneficiaryType.exceptional' |
+              translate }}</label>
           </div>
         </div>
       </div>

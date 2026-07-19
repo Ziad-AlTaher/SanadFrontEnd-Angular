@@ -23,6 +23,19 @@ export abstract class BaseService<TRead, TWrite = TRead, TUpdate = TRead> {
         );
     }
 
+    getAllPaged(filterDto: {
+        page?: number;
+        pageSize?: number;
+        search?: string;
+        sortColumn?: string;
+        sortColumnDirection?: string;
+    }): Observable<Result<{ listData: TRead[], paginationData: { totalCount: number, pageSize: number, currentPage: number, totalPages: number } }>> {
+        return this.http.post<Result<{ listData: TRead[], paginationData: { totalCount: number, pageSize: number, currentPage: number, totalPages: number } }>>(
+            `${this.apiUrl}/${this.endpoint}/GetAll`,
+            filterDto
+        );
+    }
+
     getById(id: string | number): Observable<TRead> {
         return this.http.get<Result<TRead>>(`${this.apiUrl}/${this.endpoint}/${id}`).pipe(
             map(res => res.data)

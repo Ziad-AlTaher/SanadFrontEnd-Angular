@@ -44,6 +44,8 @@ export class AidDisbursementsComponent implements OnInit {
   aidDisbursements = signal<ReadAidDisbursementDto[]>([]);
   beneficiaries = signal<ReadBeneficiaryDto[]>([]);
   aidTypes = signal<ReadAidTypeDto[]>([]);
+  totalRecords = signal(0);
+  lastLazyEvent: any = null;
 
   showDialog = signal(false);
   isEditMode = signal(false);
@@ -60,15 +62,36 @@ export class AidDisbursementsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadData();
     this.loadDropdowns();
   }
 
   loadData(): void {
+    if (this.lastLazyEvent) {
+      this.loadAidDisbursementsLazy(this.lastLazyEvent);
+    }
+  }
+
+  loadAidDisbursementsLazy(event: any): void {
+    this.lastLazyEvent = event;
+    const page = Math.floor((event.first || 0) / (event.rows || 10)) + 1;
+    const pageSize = event.rows || 10;
+    const sortColumn = event.sortField || undefined;
+    const sortColumnDirection = event.sortOrder === 1 ? 'asc' : event.sortOrder === -1 ? 'desc' : undefined;
+    const search = event.globalFilter || '';
+
     this.isLoading.set(true);
-    this.service.getAll().subscribe({
-      next: (data) => {
-        this.aidDisbursements.set(data);
+    this.service.getAllPaged({
+      page,
+      pageSize,
+      search,
+      sortColumn,
+      sortColumnDirection
+    }).subscribe({
+      next: (res) => {
+        if (res.status && res.data) {
+          this.aidDisbursements.set(res.data.listData || []);
+          this.totalRecords.set(res.data.paginationData?.totalCount || 0);
+        }
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
@@ -98,8 +121,8 @@ export class AidDisbursementsComponent implements OnInit {
 
   onAidTypeChange(aidTypeId: string): void {
     const selectedType = this.aidTypes().find(t => t.id === aidTypeId);
-    if (selectedType && selectedType.defaultValue !== undefined && selectedType.defaultValue !== null) {
-      this.form.get('amount')?.setValue(selectedType.defaultValue);
+    if (selectedType) {
+      this.form.patchValue({ amount: selectedType.defaultValue });
     }
   }
 
@@ -121,21 +144,15 @@ export class AidDisbursementsComponent implements OnInit {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     const value = this.form.value;
 
-    // Find names to update locally immediately
-    const beneficiaryName = this.beneficiaries().find(b => b.id === value.beneficiaryId)?.fullName || '';
-    const aidTypeName = this.aidTypes().find(a => a.id === value.aidTypeId)?.name || '';
-
     if (this.isEditMode() && this.selectedId()) {
       this.service.update(this.selectedId()!, { ...value, id: this.selectedId()! }).subscribe((updatedItem) => {
-        const fullItem = { ...updatedItem, beneficiaryName, aidTypeName };
-        this.aidDisbursements.update(list => list.map(b => b.id === this.selectedId() ? fullItem : b));
+        this.loadData();
         this.showDialog.set(false);
         this.messageService.add({ severity: 'success', summary: 'تم الحفظ', detail: 'تم تعديل عملية الصرف.' });
       });
     } else {
       this.service.create(value).subscribe((newItem) => {
-        const fullItem = { ...newItem, beneficiaryName, aidTypeName };
-        this.aidDisbursements.update(list => [fullItem, ...list]);
+        this.loadData();
         this.showDialog.set(false);
         this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تم إضافة عملية الصرف بنجاح.' });
       });

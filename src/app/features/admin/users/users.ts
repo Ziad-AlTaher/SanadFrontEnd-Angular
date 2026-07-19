@@ -39,6 +39,8 @@ export class UsersComponent implements OnInit {
   isEditMode = signal(false);
   selectedId = signal<number | null>(null);
   isLoading = signal(false);
+  totalRecords = signal(0);
+  lastLazyEvent: any = null;
 
   selectedRoles: string[] = [];
 
@@ -55,14 +57,36 @@ export class UsersComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadData();
+    // Lazy table automatically triggers first load
   }
 
   loadData(): void {
+    if (this.lastLazyEvent) {
+      this.loadUsersLazy(this.lastLazyEvent);
+    }
+  }
+
+  loadUsersLazy(event: any): void {
+    this.lastLazyEvent = event;
+    const page = Math.floor((event.first || 0) / (event.rows || 10)) + 1;
+    const pageSize = event.rows || 10;
+    const sortColumn = event.sortField || undefined;
+    const sortColumnDirection = event.sortOrder === 1 ? 'asc' : event.sortOrder === -1 ? 'desc' : undefined;
+    const search = event.globalFilter || '';
+
     this.isLoading.set(true);
-    this.service.getAll().subscribe({
-      next: (data) => {
-        this.users.set(data);
+    this.service.getAllPaged({
+      page,
+      pageSize,
+      search,
+      sortColumn,
+      sortColumnDirection
+    }).subscribe({
+      next: (res) => {
+        if (res.status && res.data) {
+          this.users.set(res.data.listData || []);
+          this.totalRecords.set(res.data.paginationData?.totalCount || 0);
+        }
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
@@ -141,7 +165,7 @@ export class UsersComponent implements OnInit {
       });
     } else {
       this.service.create(payload).subscribe((newItem) => {
-        this.users.update(list => [newItem, ...list]);
+        this.loadData();
         this.showDialog.set(false);
         this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تم إضافة المستخدم بنجاح.' });
       });

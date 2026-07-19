@@ -58,6 +58,8 @@ export class BeneficiariesComponent implements OnInit {
   selectedId = signal<string | null>(null);
   isLoading = signal(false);
   globalFilter = '';
+  totalRecords = signal(0);
+  lastLazyEvent: any = null;
 
   // Attachments state
   showAttachmentsDialog = signal(false);
@@ -118,14 +120,42 @@ export class BeneficiariesComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadData();
+    // Lazy table automatically triggers first load
   }
 
   loadData(): void {
+    if (this.lastLazyEvent) {
+      this.loadBeneficiariesLazy(this.lastLazyEvent);
+    }
+  }
+
+  loadBeneficiariesLazy(event: any): void {
+    this.lastLazyEvent = event;
+    const page = Math.floor((event.first || 0) / (event.rows || 10)) + 1;
+    const pageSize = event.rows || 10;
+
+    const sortColumn = event.sortField || undefined;
+    const sortColumnDirection = event.sortOrder === 1 ? 'asc' : event.sortOrder === -1 ? 'desc' : undefined;
+    const search = event.globalFilter || '';
+
     this.isLoading.set(true);
-    this.service.getAll().subscribe(data => {
-      this.beneficiaries.set(data);
-      this.isLoading.set(false);
+    this.service.getAllPaged({
+      page,
+      pageSize,
+      search,
+      sortColumn,
+      sortColumnDirection
+    }).subscribe({
+      next: (res) => {
+        if (res.status && res.data) {
+          this.beneficiaries.set(res.data.listData || []);
+          this.totalRecords.set(res.data.paginationData?.totalCount || 0);
+        }
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+      }
     });
   }
 
@@ -217,7 +247,7 @@ export class BeneficiariesComponent implements OnInit {
       });
     } else {
       this.service.create(value).subscribe((newItem) => {
-        this.beneficiaries.update(list => [newItem, ...list]);
+        this.loadData();
         this.showDialog.set(false);
         this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تم إضافة مستحق جديد.' });
       });

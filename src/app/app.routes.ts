@@ -10,6 +10,7 @@ import { BeneficiaryDetailsComponent } from './features/admin/beneficiaries/bene
 import { DonationsComponent } from './features/admin/donations/donations';
 import { AidTypesComponent } from './features/admin/aid-types/aid-types';
 import { AidDisbursementsComponent } from './features/admin/aid-disbursements/aid-disbursements';
+import { BulkAidDisbursementComponent } from './features/admin/aid-disbursements/bulk-aid-disbursement';
 import { UsersComponent } from './features/admin/users/users';
 
 export const routes: Routes = [
@@ -33,6 +34,7 @@ export const routes: Routes = [
             { path: 'beneficiaries/:id', component: BeneficiaryDetailsComponent },
             { path: 'donations', component: DonationsComponent },
             { path: 'aid-types', component: AidTypesComponent },
+            { path: 'aid-disbursements/bulk', component: BulkAidDisbursementComponent },
             { path: 'aid-disbursements', component: AidDisbursementsComponent },
             { path: 'users', component: UsersComponent }
         ]

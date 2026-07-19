@@ -1,0 +1,222 @@
+<p-toast position="top-center" />
+
+<div class="crud-page bulk-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">الصرف الجماعي للمساعدات</h1>
+      <p class="page-subtitle">اختر نوع المستفيدين ونوع المساعدة لتجهيز قائمة الصرف الجماعي</p>
+    </div>
+    @if (isPrepared()) {
+    <div class="action-btns">
+      <p-button label="إعادة تعيين" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="reset()" />
+      <p-button label="طباعة الكشف" icon="pi pi-print" severity="info" [disabled]="!someChecked()" (onClick)="printReport()" />
+      <p-button
+        [label]="isSaving() ? 'جاري الحفظ...' : ('حفظ الكل (' + checkedCount() + ')')"
+        icon="pi pi-check-circle"
+        severity="success"
+        [loading]="isSaving()"
+        [disabled]="!someChecked() || isSaving()"
+        (onClick)="saveAll()" />
+    </div>
+    }
+  </div>
+
+  <!-- Filter Card -->
+  <div class="filter-card">
+    <div class="filter-card-header">
+      <i class="pi pi-filter-fill"></i>
+      <span>معايير التجهيز</span>
+    </div>
+
+    <div class="filter-body">
+      <!-- Beneficiary Type Checkboxes -->
+      <div class="filter-section">
+        <label class="filter-label">نوع المستفيد</label>
+        <div class="type-checkboxes">
+          <label class="type-chip" [class.type-chip-active]="typeMonthly()">
+            <p-checkbox [binary]="true" [ngModel]="typeMonthly()" (ngModelChange)="typeMonthly.set($event)" />
+            <i class="pi pi-calendar"></i>
+            شهري
+          </label>
+          <label class="type-chip" [class.type-chip-active]="typeChronicIllness()">
+            <p-checkbox [binary]="true" [ngModel]="typeChronicIllness()" (ngModelChange)="typeChronicIllness.set($event)" />
+            <i class="pi pi-heart"></i>
+            مرض مزمن
+          </label>
+          <label class="type-chip" [class.type-chip-active]="typeExceptional()">
+            <p-checkbox [binary]="true" [ngModel]="typeExceptional()" (ngModelChange)="typeExceptional.set($event)" />
+            <i class="pi pi-star"></i>
+            استثنائي
+          </label>
+        </div>
+      </div>
+
+      <!-- Aid Type & Amount -->
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label class="filter-label">نوع المساعدة</label>
+          <p-select
+            [ngModel]="selectedAidTypeId()"
+            (ngModelChange)="onAidTypeChange($event)"
+            [options]="aidTypes()"
+            optionLabel="name"
+            optionValue="id"
+            [filter]="true"
+            filterBy="name"
+            placeholder="اختر نوع المساعدة"
+            styleClass="w-full"
+            appendTo="body" />
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">المبلغ الافتراضي (ج.م)</label>
+          <p-inputnumber
+            [ngModel]="amount()"
+            (ngModelChange)="amount.set($event)"
+            [min]="0"
+            [showButtons]="false"
+            styleClass="w-full"
+            placeholder="0" />
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">تاريخ الصرف</label>
+          <input
+            type="date"
+            [ngModel]="disbursementDate()"
+            (ngModelChange)="disbursementDate.set($event)"
+            class="filter-date-input w-full" />
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">العينية (اختياري)</label>
+          <input
+            pInputText
+            type="text"
+            [ngModel]="inKindName()"
+            (ngModelChange)="inKindName.set($event)"
+            class="w-full"
+            placeholder="اسم العينية إن وجدت" />
+        </div>
+      </div>
+
+      <!-- Prepare Button -->
+      <div class="prepare-action">
+        <p-button
+          label="تجهيز القائمة"
+          icon="pi pi-list"
+          iconPos="right"
+          [loading]="isLoading()"
+          (onClick)="prepare()"
+          styleClass="prepare-btn" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Table -->
+  @if (isPrepared()) {
+  <div class="table-card preview-table-card">
+    <div class="preview-header">
+      <div class="preview-header-info">
+        <i class="pi pi-table"></i>
+        <span>قائمة الصرف المجهزة</span>
+        <span class="preview-badge">{{ bulkRows().length }} سجل</span>
+        @if (checkedCount() < bulkRows().length) {
+        <span class="preview-badge preview-badge-warn">{{ checkedCount() }} محدد</span>
+        }
+      </div>
+    </div>
+
+    <p-table
+      [value]="bulkRows()"
+      [scrollable]="true"
+      scrollHeight="500px"
+      styleClass="p-datatable-striped p-datatable-sm bulk-table"
+      dataKey="beneficiary.id"
+      [rowTrackBy]="trackByBeneficiary">
+
+      <ng-template #header>
+        <tr>
+          <th class="col-check">
+            <p-checkbox
+              [binary]="true"
+              [ngModel]="allChecked()"
+              (ngModelChange)="toggleMaster($event)"
+              [indeterminate]="someChecked() && !allChecked()" />
+          </th>
+          <th>#</th>
+          <th>اسم المستفيد</th>
+          <th>نوع المستفيد</th>
+          <th>نوع المساعدة</th>
+          <th class="col-amount">المبلغ (ج.م)</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-row let-rowIndex="rowIndex">
+        <tr [class.row-unchecked]="!row.checked">
+          <td class="col-check">
+            <p-checkbox
+              [binary]="true"
+              [ngModel]="row.checked"
+              (ngModelChange)="toggleRow(rowIndex, $event)" />
+          </td>
+          <td class="text-muted">{{ rowIndex + 1 }}</td>
+          <td class="beneficiary-name" [class.strikethrough]="!row.checked">
+            <i class="pi pi-user name-icon"></i>
+            {{ row.beneficiary.fullName }}
+          </td>
+          <td>
+            <span class="type-tag">{{ getBeneficiaryTypeLabel(row.beneficiary.beneficiaryType ?? 0) }}</span>
+          </td>
+          <td>{{ row.aidTypeName }}</td>
+          <td class="col-amount">
+            <p-inputnumber
+              [ngModel]="row.amount"
+              (ngModelChange)="updateAmount(rowIndex, $event)"
+              [min]="0"
+              [disabled]="!row.checked"
+              styleClass="amount-input"
+              [inputStyle]="{ width: '100%' }" />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="6" class="text-center p-4">
+            <div class="empty-state">
+              <i class="pi pi-inbox empty-icon"></i>
+              <p>لا يوجد مستفيدون من النوع المحدد.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+
+    <!-- Bottom Save Bar -->
+    <div class="save-bar">
+      <div class="save-bar-info">
+        <span class="save-bar-count">
+          <i class="pi pi-check-circle"></i>
+          {{ checkedCount() }} من {{ bulkRows().length }} سجل محدد
+        </span>
+      </div>
+      <div class="action-btns">
+        <p-button label="إعادة تعيين" icon="pi pi-refresh" severity="secondary" [outlined]="true" (onClick)="reset()" />
+        <p-button label="طباعة الكشف" icon="pi pi-print" severity="info" [disabled]="!someChecked()" (onClick)="printReport()" />
+        <p-button
+          [label]="isSaving() ? 'جاري الحفظ...' : ('حفظ ' + checkedCount() + ' سجل')"
+          icon="pi pi-save"
+          severity="success"
+          [loading]="isSaving()"
+          [disabled]="!someChecked() || isSaving()"
+          (onClick)="saveAll()" />
+      </div>
+    </div>
+  </div>
+  }
+
+</div>

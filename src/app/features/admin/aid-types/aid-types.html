@@ -18,7 +18,8 @@
   <!-- Table -->
   <div class="table-card">
     <p-table [value]="aidTypes()" [loading]="isLoading()" [paginator]="true" [rows]="10"
-      [rowsPerPageOptions]="[5, 10, 25]" [globalFilterFields]="['name', 'description']" dataKey="id"
+      [rowsPerPageOptions]="[5, 10, 25, 100, 1000, 100000]" [lazy]="true" [totalRecords]="totalRecords()"
+      (onLazyLoad)="loadAidTypesLazy($event)" dataKey="id"
       styleClass="p-datatable-striped p-datatable-sm" #dt>
       <ng-template #caption>
         <div class="table-caption">

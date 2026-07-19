@@ -40,6 +40,8 @@ export class DonationsComponent implements OnInit {
   isEditMode = signal(false);
   selectedId = signal<string | null>(null);
   isLoading = signal(false);
+  totalRecords = signal(0);
+  lastLazyEvent: any = null;
 
   donationTypes = [
     { label: 'admin.donations.cash', value: 1 },
@@ -55,14 +57,36 @@ export class DonationsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadData();
+    // Lazy table automatically triggers first load
   }
 
   loadData(): void {
+    if (this.lastLazyEvent) {
+      this.loadDonationsLazy(this.lastLazyEvent);
+    }
+  }
+
+  loadDonationsLazy(event: any): void {
+    this.lastLazyEvent = event;
+    const page = Math.floor((event.first || 0) / (event.rows || 10)) + 1;
+    const pageSize = event.rows || 10;
+    const sortColumn = event.sortField || undefined;
+    const sortColumnDirection = event.sortOrder === 1 ? 'asc' : event.sortOrder === -1 ? 'desc' : undefined;
+    const search = event.globalFilter || '';
+
     this.isLoading.set(true);
-    this.service.getAll().subscribe({
-      next: (data) => {
-        this.donations.set(data);
+    this.service.getAllPaged({
+      page,
+      pageSize,
+      search,
+      sortColumn,
+      sortColumnDirection
+    }).subscribe({
+      next: (res) => {
+        if (res.status && res.data) {
+          this.donations.set(res.data.listData || []);
+          this.totalRecords.set(res.data.paginationData?.totalCount || 0);
+        }
         this.isLoading.set(false);
       },
       error: () => this.isLoading.set(false)
@@ -95,15 +119,15 @@ export class DonationsComponent implements OnInit {
     const value = this.form.value;
     if (this.isEditMode() && this.selectedId()) {
       this.service.update(this.selectedId()!, { ...value, id: this.selectedId()! }).subscribe((updatedItem) => {
-        this.donations.update(list => list.map(b => b.id === this.selectedId() ? updatedItem : b));
+        this.loadData();
         this.showDialog.set(false);
         this.messageService.add({ severity: 'success', summary: 'تم الحفظ', detail: 'تم تعديل بيانات التبرع.' });
       });
     } else {
       this.service.create(value).subscribe((newItem) => {
-        this.donations.update(list => [newItem, ...list]);
+        this.loadData();
         this.showDialog.set(false);
-        this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تم تسجيل التبرع بنجاح.' });
+        this.messageService.add({ severity: 'success', summary: 'تمت الإضافة', detail: 'تم إضافة التبرع بنجاح.' });
       });
     }
   }
